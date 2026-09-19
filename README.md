@@ -16,7 +16,16 @@ Run `sdoc run` to reproduce. Tests: `pytest` (49 tests, ~2 s).
 
 Docs: [docs/TODO.md](docs/TODO.md) (what's left) · [docs/PLAN.md](docs/PLAN.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/HANDOFF.md](docs/HANDOFF.md) · [docs/COMPLIANCE.md](docs/COMPLIANCE.md) · [docs/pitch/](docs/pitch/) (deck + video script) · [docs/USER-GUIDE.md](docs/USER-GUIDE.md) · [docs/DEMO-ANDROID.md](docs/DEMO-ANDROID.md) (show the app from any laptop) · [web/README.md](web/README.md)
 
-## Quick start
+## Quick start with Docker (one command)
+
+```bash
+docker compose up --build
+# dashboard http://localhost:5173   API http://localhost:8000/docs
+```
+
+Optional: put `.env` (Gemini key) in the repo root and `ground_truth.json` in `Provided Information/Other/data_v2/` first; both are picked up automatically. Then open the dashboard and click **Process inbox**.
+
+## Quick start without Docker
 
 ```bash
 py -3.12 -m venv .venv                # any Python 3.11+

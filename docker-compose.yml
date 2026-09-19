@@ -1,0 +1,26 @@
+# One command to run SDOC:   docker compose up --build
+#   dashboard  http://localhost:5173
+#   API        http://localhost:8000   (docs at /docs)
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env            # optional: SDOC_LLM_PROVIDER + GEMINI_API_KEY
+        required: false
+    volumes:
+      # Optional answer key for the Impact page and scoring. Missing file = accuracy panel hidden.
+      - ./Provided Information/Other:/app/Provided Information/Other:ro
+      # Keep results between restarts.
+      - ./output:/app/output
+
+  web:
+    build:
+      context: ./web
+      args:
+        VITE_API_URL: http://localhost:8000
+    ports:
+      - "5173:80"
+    depends_on:
+      - api

@@ -60,6 +60,9 @@ Keep it a static build (React/Vite or Next static export) so it can sit on Ampli
 
 ## Backend (cloud)
 
+The repo root `Dockerfile` builds the API image (`docker build -t sdoc-api .`). It can run as-is on AWS App Runner or ECS, or as a Lambda container image with Mangum; `docker-compose.yml` runs API + dashboard locally.
+
+
 Target per `PLAN.md`: AWS Free Plan, $0 out of pocket.
 
 1. **Lambda** for the API. Wrap `sdoc.api:app` with [Mangum](https://mangum.io) (`handler = Mangum(app)`), package with the `Provided Information/Participant Info` data or read it from **S3** (set `SDOC_DATA_DIR` to a local copy synced at cold start, or implement an `S3Inbox(InboxRepository)`). Expose with a Lambda Function URL.

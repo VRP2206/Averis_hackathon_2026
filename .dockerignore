@@ -1,0 +1,13 @@
+.git
+.venv
+.cache
+output
+apk
+docs
+tests
+scripts
+**/__pycache__
+*.egg-info
+.env
+Provided Information/Other
+web
