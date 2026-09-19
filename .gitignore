@@ -1,0 +1,14 @@
+# Organiser package sent by mistake: contains the answer key. Never commit.
+Provided Information/Other/
+ground_truth.json
+
+# Python / Node / env
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.env
+submission.json
+
+# Organiser scoring-server config (references the answer key)
+Provided Information/Participant Info/docker-compose.yml
