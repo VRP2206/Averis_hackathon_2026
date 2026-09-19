@@ -12,3 +12,9 @@ submission.json
 
 # Organiser scoring-server config (references the answer key)
 Provided Information/Participant Info/docker-compose.yml
+
+# Build artefacts
+output/
+.cache/
+*.egg-info/
+.pytest_cache/

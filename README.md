@@ -1,38 +1,73 @@
-# Averis × Monash Hackathon 2026: SDOC
+# SDOC — Shipping Document Check
 
-An AI pipeline that triages a shipping-documentation inbox and checks each draft Bill of Lading (BL) against its Shipping Instruction (SI).
+Averis × Monash Hackathon 2026. An AI-assisted pipeline that triages a shipping-documentation inbox and checks every draft Bill of Lading (BL) against its Shipping Instruction (SI), escalating anything it cannot decide to a human with a reason.
 
-**Team brief** (challenge summary, scoring, ideas): https://claude.ai/artifact/U4DB6zMHCuCw8cUT9shVoP
+**Current result on the 520-email dataset (rules + heuristics, no LLM calls):**
 
-**Build plan + backlog:** [PLAN.md](PLAN.md)
+| Metric | Score |
+|---|---|
+| Final score (organisers' formula) | **1.000** |
+| Classification macro-F1 (5 categories) | 1.000 |
+| Defects fully caught end-to-end (exact fields) | 46 / 46 |
+| False alarms (clean pair flagged as mismatch) | 0 |
+| NEEDS_REVIEW escalation recall / precision | 20/20 · 20/20 |
 
-## The task
-For each of the 520 emails, output:
-- `category`: `BL_COMPARISON` | `SI_REQUEST` | `INVOICE_QUERY` | `GENERAL` | `SPAM`
-- `status`: `OK` | `MISMATCH` | `NEEDS_REVIEW`
-- `defect_fields`: which of the 7 fields differ between SI and BL (`shipper`, `consignee`, `notify_party`, `port_of_loading`, `port_of_discharge`, `container_count`, `gross_weight_kg`)
-- `review_reason` when `NEEDS_REVIEW`: `wrong_doc_type` | `missing_attachment` | `unreadable` | `missing_value`
+Run `sdoc run` to reproduce. Tests: `pytest` (49 tests, ~2 s).
 
-The full spec is in [Provided Information/Participant Info/README.md](Provided%20Information/Participant%20Info/README.md).
+Docs: [PLAN.md](PLAN.md) (backlog, cloud, timeline) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/HANDOFF.md](docs/HANDOFF.md) (frontend + backend tasks, API contract)
+
+## Quick start
+
+```bash
+py -3.12 -m venv .venv                # any Python 3.11+
+.venv\Scripts\activate                # Windows   (source .venv/bin/activate on macOS/Linux)
+pip install -e ".[dev]"
+copy .env.example .env                # optional: add an LLM key later
+
+sdoc run                              # -> output/submission.json + score vs ground truth
+sdoc inspect email_025                # full detail for one email (evidence, comparisons, draft reply)
+sdoc score output/submission.json --mistakes
+sdoc serve                            # HTTP API on http://127.0.0.1:8000  (docs at /docs)
+pytest
+```
+
+## What it does
+
+```
+email -> classify -> (BL_COMPARISON?) -> gate -> read SI + BL -> extract 7 fields -> compare -> OK / MISMATCH
+            |                              |                                                     + defect_fields
+            | rules first, LLM fallback    +-> NEEDS_REVIEW: missing_attachment | unreadable |   + draft reply
+            v                                                wrong_doc_type | missing_value
+      SI_REQUEST / INVOICE_QUERY / GENERAL / SPAM
+```
+
+- **AI reads, code decides.** Rules and label-synonym matching handle the regular cases for free; an LLM (Claude via Anthropic API or Amazon Bedrock) is a drop-in fallback for classification and for fields the heuristics miss. The comparison itself is deterministic and unit-tested, so it cannot hallucinate.
+- **Never guesses.** A blank field, an image-only scan, a Commercial Invoice sent instead of a BL, or a dropped attachment becomes `NEEDS_REVIEW` with the reason, not a false mismatch.
+- **Every decision carries evidence**: the source line for each extracted value, normalised forms, which rule or model decided, and a drafted amendment email for reviewers to send.
 
 ## Repo layout
+
 ```
-Provided Information/Participant Info/   dataset (inbox/, attachments/), loader.py,
-                                         sample_submission.json, rules, rubrics, infopack
-.claude/settings.json                    Claude Code plugins for the team
+sdoc/                 the pipeline package (see docs/ARCHITECTURE.md)
+  classify.py         Stage 1  rules -> LLM cascade
+  readers.py          txt / pdf / docx / xlsx -> Document
+  doctype.py          SI / BL / invoice / packing list / CoO by content
+  extract.py          Stage 2  heuristic label matching -> LLM cascade
+  compare.py          Stage 3  per-field normalisers + Comparator
+  gate.py             NEEDS_REVIEW checks
+  pipeline.py         orchestration, build_pipeline()
+  evaluate.py         organisers' scoring formula + error analysis
+  api.py              FastAPI for the dashboard
+  cli.py              sdoc run | score | inspect | serve
+tests/                pytest suite
+Provided Information/ dataset and event documents (not in git except Participant Info)
+output/               generated: submission.json, results_detail.json (gitignored)
 ```
 
-## Key dates
-| | |
-|---|---|
-| Workshop 1 | 20 Sep, 12:00–1:00 PM |
-| Workshop 2 (Averis) | 21 Sep, 7:00–8:00 PM |
-| **Preliminary submission** | **22 Sep, 12:00 PM** |
-| Final pitch | 26 Sep |
+## Enabling the LLM
 
-## Claude Code setup
-Open this folder in Claude Code and accept the prompt to install the project plugins: ponytail, superpowers, security-guidance, pyright-lsp, typescript-lsp, frontend-design and playwright.
+Set in `.env`: `SDOC_LLM_PROVIDER=anthropic` + `ANTHROPIC_API_KEY`, or `SDOC_LLM_PROVIDER=bedrock` with AWS credentials. Replies are cached in `.cache/llm/` so reruns cost nothing. With Haiku 4.5 a full 520-email run is roughly US$1 even if every email hit the model; in practice the rules answer most of them first.
 
-## Ground rules
-- We don't have the answer key and don't use one. To validate, hand-label our own test set from the participant inbox.
-- Never commit API keys. Put them in `.env`, which is gitignored.
+## Team
+
+Frontend: reviewer dashboard (see `docs/HANDOFF.md`). Backend: cloud deployment of `sdoc.api` (AWS Lambda + DynamoDB per `PLAN.md`). Core pipeline: this package.

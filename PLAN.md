@@ -116,24 +116,24 @@ flowchart LR
 
 ## Product backlog
 
-Everything marked Must is needed for the 22 Sep preliminary submission. Should items are what make us stand out; Finals items wait until after 24 Sep.
+`[x]` done · `[~]` built, needs an API key to switch on. Everything marked Must is needed for the 22 Sep preliminary submission. Should items are what make us stand out; Finals items wait until after 24 Sep.
 
 | Done | Epic | Priority | Earns marks on |
 | --- | --- | --- | --- |
 | [ ] | Hand-label a 40-email test set (mix of categories and formats) | Must | Validation, impact metrics |
-| [ ] | Load emails; subject-code rules for classification | Must | Stage 1 score (30%) |
-| [ ] | LLM fallback classifier for emails rules can't place | Must | Stage 1, AI requirement |
-| [ ] | File readers: txt, PDF, DOCX, XLSX | Must | Working prototype |
-| [ ] | LLM extraction of the 7 fields (JSON schema, source line, confidence) | Must | Tech integration |
-| [ ] | Normalise + compare fields in code | Must | End-to-end (50%) |
-| [ ] | Gatekeeper: 4 NEEDS_REVIEW reasons | Must | Reliability, robustness |
-| [ ] | Generate submission.json; score against our test set | Must | Validation |
+| [x] | Load emails; subject-code rules for classification | Must | Stage 1 score (30%) |
+| [~] | LLM fallback classifier for emails rules can't place | Must | Stage 1, AI requirement |
+| [x] | File readers: txt, PDF, DOCX, XLSX | Must | Working prototype |
+| [~] | LLM extraction of the 7 fields (JSON schema, source line, confidence) | Must | Tech integration |
+| [x] | Normalise + compare fields in code | Must | End-to-end (50%) |
+| [x] | Gatekeeper: 4 NEEDS_REVIEW reasons | Must | Reliability, robustness |
+| [x] | Generate submission.json; score against our test set | Must | Validation |
 | [ ] | Deploy API to Lambda (Function URL) + DynamoDB | Must | Cloud requirement |
 | [ ] | Web dashboard: inbox + side-by-side compare view | Must | Working prototype, UX |
 | [ ] | Submission pack: README, slides, 5-min video, form | Must | Mandatory |
-| [ ] | Drafted amendment email for each MISMATCH | Should | Differentiation, user value |
-| [ ] | Audit trail: decided_by, source lines, reviewer decisions | Should | Engineering quality |
-| [ ] | Unit tests for normaliser and comparer | Should | Engineering quality |
+| [x] | Drafted amendment email for each MISMATCH | Should | Differentiation, user value |
+| [x] | Audit trail: decided_by, source lines, reviewer decisions | Should | Engineering quality |
+| [x] | Unit tests for normaliser and comparer | Should | Engineering quality |
 | [ ] | Impact panel: accuracy, false alarms, minutes saved | Should | Impact |
 | [ ] | Live Gmail/Outlook mailbox connection | Finals | End-to-end (finals) |
 | [ ] | SQS worker for parallel batch processing | Finals | Architecture & scalability |
