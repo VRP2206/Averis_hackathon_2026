@@ -74,7 +74,7 @@ export function ComparePage() {
 
       {result.status === "NEEDS_REVIEW" && result.review_reason && (
         <div role="status" className="rounded-md border border-warn bg-warn-bg p-3 text-sm text-warn">
-          <strong>Needs human review: {result.review_reason.replace("_", " ")}.</strong> {REASON_TEXT[result.review_reason]}
+          <strong>Needs human review: {result.review_reason.replaceAll("_", " ")}.</strong> {REASON_TEXT[result.review_reason]}
           {result.notes.length > 0 && <ul className="mt-1 list-disc pl-5">{result.notes.map((n, i) => <li key={i}>{n}</li>)}</ul>}
         </div>
       )}

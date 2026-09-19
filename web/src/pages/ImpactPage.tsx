@@ -67,7 +67,7 @@ export function ImpactPage() {
                 <CardContent>
                   <table className="w-full text-sm"><caption className="sr-only">F1 per category</caption>
                     <tbody>{Object.entries(m.stage1.per_category).map(([c, v]) => (
-                      <tr key={c} className="border-b last:border-0"><th scope="row" className="py-1 text-left font-normal">{c.replace("_", " ")}</th><td className="py-1 text-right tabular-nums">{v.f1.toFixed(3)}</td></tr>
+                      <tr key={c} className="border-b last:border-0"><th scope="row" className="py-1 text-left font-normal">{c.replaceAll("_", " ")}</th><td className="py-1 text-right tabular-nums">{v.f1.toFixed(3)}</td></tr>
                     ))}</tbody>
                   </table>
                 </CardContent>

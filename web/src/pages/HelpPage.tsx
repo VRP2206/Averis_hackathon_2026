@@ -57,7 +57,7 @@ export function HelpPage() {
             <span className="text-lg font-bold">Result:</span>
             <StatusBadge status={result.status} />
             {result.defect_fields.length > 0 && <span>fields: {result.defect_fields.join(", ")}</span>}
-            {result.review_reason && <span>reason: {result.review_reason.replace("_", " ")}</span>}
+            {result.review_reason && <span>reason: {result.review_reason.replaceAll("_", " ")}</span>}
             <Button asChild variant="outline" size="sm"><Link to={`/emails/${result.email_id}`}>Open the comparison</Link></Button>
           </div>
         )}
