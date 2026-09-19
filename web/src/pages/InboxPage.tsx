@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Paperclip, RefreshCw } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Mail, Paperclip, RefreshCw, XCircle } from "lucide-react";
 import { api, type Category, type EmailSummary, type Status } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,8 +55,8 @@ export function InboxPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Inbox</h1>
-          <p className="text-sm text-muted-foreground">Every email triaged; document checks flagged for review.</p>
+          <h1 className="hover-sheen inline-block">Inbox</h1>
+          <p className="text-lg text-muted-foreground">Every email triaged; document checks flagged for review.</p>
         </div>
         <Button onClick={processInbox} disabled={busy}>
           <RefreshCw className={busy ? "size-4 animate-spin" : "size-4"} aria-hidden="true" />
@@ -68,10 +68,10 @@ export function InboxPage() {
       <MailSources onChange={load} />
 
       <Stats items={[
-        { label: "Emails", value: counts.total },
-        { label: "Mismatches to amend", value: counts.mismatch, tone: "bad" },
-        { label: "Need human review", value: counts.review, tone: "warn" },
-        { label: "Checked clean", value: counts.ok, tone: "ok" },
+        { label: "Emails", value: counts.total, tone: "blue", icon: Mail },
+        { label: "Mismatches to amend", value: counts.mismatch, tone: "red", icon: XCircle },
+        { label: "Need human review", value: counts.review, tone: "yellow", icon: AlertTriangle },
+        { label: "Checked clean", value: counts.ok, tone: "green", icon: CheckCircle2 },
       ]} />
 
       <form className="grid gap-3 sm:grid-cols-[1fr_auto_auto]" onSubmit={(e) => e.preventDefault()} aria-label="Filter inbox">
@@ -98,7 +98,7 @@ export function InboxPage() {
         <p className="rounded-md border p-3 text-sm">No results yet. Choose <strong>Process inbox</strong> to run the pipeline.</p>
       )}
 
-      <div className="overflow-x-auto rounded-md border">
+      <div className="lift overflow-x-auto rounded-2xl border bg-card">
         <Table>
           <caption className="sr-only">Inbox, {filtered.length} of {rows?.length ?? 0} emails shown</caption>
           <TableHeader>
@@ -112,7 +112,7 @@ export function InboxPage() {
           </TableHeader>
           <TableBody>
             {filtered.map((r) => (
-              <TableRow key={r.email_id}>
+              <TableRow key={r.email_id} data-status={r.result.category === "BL_COMPARISON" ? r.result.status : "NONE"}>
                 <TableCell className="max-w-md">
                   <Link to={`/emails/${r.email_id}`} title={r.subject}
                     className="block truncate font-medium underline-offset-2 hover:underline focus-visible:underline">

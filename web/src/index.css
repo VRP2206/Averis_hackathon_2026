@@ -3,77 +3,71 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Fonts are self-hosted (Fontsource, OFL) so no request goes to a font CDN.
-   Fredoka: rounded display face for headings and the brand. Nunito: body. */
-
-/* Palette: indigo-violet primary with Gmail's red / green / yellow / blue for
-   status. Every status pairing is >= 4.5:1 in both themes and always
-   accompanied by text + icon. */
+/* Light-first, Gmail-white ground with Google's four colours doing the work.
+   Fonts self-hosted (Fontsource, OFL): Fredoka for display, Nunito for body. */
 :root {
-  --radius: 0.85rem;
-  --background: oklch(0.985 0.006 290);
-  --foreground: oklch(0.22 0.05 285);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.05 285);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.05 285);
-  --primary: oklch(0.5 0.2 285);            /* violet-blue */
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.02 290);
-  --secondary-foreground: oklch(0.3 0.06 285);
-  --muted: oklch(0.95 0.02 290);
-  --muted-foreground: oklch(0.47 0.04 285);
-  --accent: oklch(0.93 0.04 290);
-  --accent-foreground: oklch(0.3 0.06 285);
-  --destructive: oklch(0.55 0.21 27);
-  --border: oklch(0.9 0.02 290);
-  --input: oklch(0.9 0.02 290);
-  --ring: oklch(0.6 0.18 285);
-  /* Gmail-inspired status colours */
-  --ok: oklch(0.45 0.15 150);      --ok-bg: oklch(0.95 0.05 150);      /* green  #34A853 family */
-  --bad: oklch(0.5 0.21 27);       --bad-bg: oklch(0.95 0.04 27);      /* red    #EA4335 family */
-  --warn: oklch(0.52 0.14 80);     --warn-bg: oklch(0.96 0.07 90);     /* yellow #FBBC04 family */
-  --info: oklch(0.5 0.18 255);     --info-bg: oklch(0.94 0.04 255);    /* blue   #4285F4 family */
-  --sheen-a: oklch(0.62 0.22 290);
-  --sheen-b: oklch(0.65 0.2 250);
-  --sheen-c: oklch(0.7 0.2 330);
+  --radius: 1rem;
+  --g-blue: #4285F4; --g-red: #EA4335; --g-yellow: #FBBC04; --g-green: #34A853;
+  --g-blue-deep: #1A56C4; --g-red-deep: #B3261E; --g-yellow-deep: #8A5A00; --g-green-deep: #1E7A3F;
+
+  --background: #FFFFFF;
+  --foreground: #1F1B3A;
+  --card: #FFFFFF;
+  --card-foreground: #1F1B3A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1F1B3A;
+  --primary: #5B4BD6;                       /* violet-blue */
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1EEFF;
+  --secondary-foreground: #2A2454;
+  --muted: #F4F2FB;
+  --muted-foreground: #5A5578;
+  --accent: #ECE8FF;
+  --accent-foreground: #2A2454;
+  --destructive: var(--g-red-deep);
+  --border: #E6E2F5;
+  --input: #DDD8F0;
+  --ring: #7C6CF2;
+  --ok: var(--g-green-deep);   --ok-bg: #E6F4EA;
+  --bad: var(--g-red-deep);    --bad-bg: #FCE8E6;
+  --warn: var(--g-yellow-deep);--warn-bg: #FEF7E0;
+  --info: var(--g-blue-deep);  --info-bg: #E8F0FE;
+  --shadow-ink: rgba(31, 27, 58, .18);
 }
 
 .dark {
-  --background: oklch(0.16 0.03 285);
-  --foreground: oklch(0.94 0.01 290);
-  --card: oklch(0.21 0.035 285);
-  --card-foreground: oklch(0.94 0.01 290);
-  --popover: oklch(0.21 0.035 285);
-  --popover-foreground: oklch(0.94 0.01 290);
-  --primary: oklch(0.76 0.15 285);
-  --primary-foreground: oklch(0.16 0.03 285);
-  --secondary: oklch(0.27 0.04 285);
-  --secondary-foreground: oklch(0.94 0.01 290);
-  --muted: oklch(0.27 0.04 285);
-  --muted-foreground: oklch(0.72 0.03 290);
-  --accent: oklch(0.31 0.06 285);
-  --accent-foreground: oklch(0.94 0.01 290);
-  --destructive: oklch(0.72 0.17 25);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.7 0.15 285);
-  --ok: oklch(0.82 0.16 150);      --ok-bg: oklch(0.3 0.07 150);
-  --bad: oklch(0.8 0.14 27);       --bad-bg: oklch(0.33 0.09 27);
-  --warn: oklch(0.86 0.14 88);     --warn-bg: oklch(0.34 0.08 85);
-  --info: oklch(0.8 0.12 255);     --info-bg: oklch(0.3 0.07 255);
-  --sheen-a: oklch(0.78 0.16 290);
-  --sheen-b: oklch(0.8 0.14 250);
-  --sheen-c: oklch(0.82 0.15 330);
+  --background: #13112A;
+  --foreground: #F0EDFB;
+  --card: #1C1938;
+  --card-foreground: #F0EDFB;
+  --popover: #1C1938;
+  --popover-foreground: #F0EDFB;
+  --primary: #A99CFF;
+  --primary-foreground: #13112A;
+  --secondary: #272352;
+  --secondary-foreground: #F0EDFB;
+  --muted: #272352;
+  --muted-foreground: #B4AFD2;
+  --accent: #2E2960;
+  --accent-foreground: #F0EDFB;
+  --destructive: #F28B82;
+  --border: rgba(255,255,255,.12);
+  --input: rgba(255,255,255,.16);
+  --ring: #A99CFF;
+  --ok: #81C995;   --ok-bg: #1B3A2A;
+  --bad: #F28B82;  --bad-bg: #4A2320;
+  --warn: #FDD663; --warn-bg: #3D3115;
+  --info: #8AB4F8; --info-bg: #1F2E52;
+  --shadow-ink: rgba(0,0,0,.5);
 }
 
 @theme inline {
   --font-sans: "Nunito Variable", "Segoe UI", system-ui, sans-serif;
   --font-display: "Fredoka Variable", "Nunito Variable", "Segoe UI", system-ui, sans-serif;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 3px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 6px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -96,41 +90,73 @@
   --color-bad: var(--bad);     --color-bad-bg: var(--bad-bg);
   --color-warn: var(--warn);   --color-warn-bg: var(--warn-bg);
   --color-info: var(--info);   --color-info-bg: var(--info-bg);
+  --color-g-blue: var(--g-blue); --color-g-red: var(--g-red); --color-g-yellow: var(--g-yellow); --color-g-green: var(--g-green);
 }
 
 @layer base {
   * { @apply border-border outline-ring/50; }
-  html { font-size: 17px; }
-  @media (min-width: 1024px) { html { font-size: 18px; } }
-  body { @apply bg-background text-foreground font-sans; line-height: 1.55; }
-  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: 0.01em; }
+  html { font-size: 19px; }
+  @media (min-width: 1280px) { html { font-size: 21px; } }
+  body { @apply bg-background text-foreground font-sans; line-height: 1.5; position: relative; }
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: .01em; }
+  h1 { font-size: 2.6rem; line-height: 1.05; font-weight: 600; text-shadow: 0 3px 14px var(--shadow-ink); }
+  h2 { font-size: 1.6rem; font-weight: 600; text-shadow: 0 2px 8px var(--shadow-ink); }
+  h3 { text-shadow: 0 1px 4px var(--shadow-ink); }
   :focus-visible { @apply outline-2 outline-offset-2 outline-ring; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 }
 
-/* Brand / heading sheen: violet -> blue -> pink gradient text with a slow shimmer. */
-.sheen {
-  background: linear-gradient(100deg, var(--sheen-a), var(--sheen-b) 45%, var(--sheen-c) 75%, var(--sheen-a));
-  background-size: 250% 100%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: sheen 9s linear infinite;
-}
-@keyframes sheen { to { background-position: -250% 0; } }
-@media (prefers-reduced-motion: reduce) { .sheen { animation: none; } }
+/* ---- Atmosphere: slow-drifting Google-colour blobs behind everything ---- */
+.blobs { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.blobs span { position: absolute; width: 42vmax; height: 42vmax; border-radius: 50%; filter: blur(90px); opacity: .28; mix-blend-mode: multiply; animation: drift 26s ease-in-out infinite alternate; }
+.dark .blobs span { mix-blend-mode: screen; opacity: .22; }
+.blobs .b1 { background: var(--g-blue);   top: -18vmax; left: -10vmax; }
+.blobs .b2 { background: var(--g-red);    top: 20vmax; right: -16vmax; animation-delay: -6s; animation-duration: 31s; }
+.blobs .b3 { background: var(--g-yellow); bottom: -20vmax; left: 20vmax; animation-delay: -12s; animation-duration: 35s; }
+.blobs .b4 { background: var(--g-green);  bottom: 10vmax; right: 25vmax; animation-delay: -18s; animation-duration: 29s; }
+@keyframes drift { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(9vmax, -7vmax, 0) scale(1.18); } }
 
-/* Page header band with a soft violet-blue glow */
-.header-band {
-  background:
-    radial-gradient(60rem 12rem at 10% -40%, color-mix(in oklch, var(--sheen-a) 22%, transparent), transparent 70%),
-    radial-gradient(40rem 10rem at 90% -30%, color-mix(in oklch, var(--sheen-b) 18%, transparent), transparent 70%),
-    color-mix(in oklch, var(--background) 92%, transparent);
+/* ---- Google stripe under the header ---- */
+.g-stripe { height: 5px; background: linear-gradient(90deg, var(--g-blue) 0 25%, var(--g-red) 25% 50%, var(--g-yellow) 50% 75%, var(--g-green) 75%); }
+
+/* ---- Brand + heading sheen: gradient text, shimmer sweeps on hover ---- */
+.sheen, .hover-sheen {
+  background: linear-gradient(100deg, var(--g-blue), var(--primary) 30%, var(--g-red) 52%, var(--g-yellow) 70%, var(--g-green) 88%, var(--g-blue));
+  background-size: 300% 100%; background-position: 100% 0;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none; filter: drop-shadow(0 3px 6px var(--shadow-ink));
+  transition: background-position 1.6s ease;
 }
+.sheen { animation: sheen 12s linear infinite; }
+.hover-sheen:hover, .hover-sheen:focus-visible, a:hover .hover-sheen { background-position: 0% 0; }
+@keyframes sheen { to { background-position: -300% 0; } }
+
+/* ---- Lift: cards and tiles grow and gain shadow on hover ---- */
+.lift { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; box-shadow: 0 6px 20px -8px var(--shadow-ink); will-change: transform; }
+.lift:hover, .lift:focus-within { transform: translateY(-6px) scale(1.025); box-shadow: 0 22px 44px -14px var(--shadow-ink); }
+
+/* Colour gems: KPI tiles in Google colours with a glossy highlight */
+.gem { position: relative; overflow: hidden; color: #fff; border: 0; text-shadow: 0 2px 6px rgba(0,0,0,.28); }
+.gem::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(255,255,255,.35), transparent 40%, transparent 60%, rgba(255,255,255,.18)); transform: translateX(-120%); transition: transform .9s ease; }
+.gem:hover::after { transform: translateX(120%); }
+.gem-blue   { background: linear-gradient(135deg, #5B9DF8, var(--g-blue) 60%, #2B6BD6); }
+.gem-red    { background: linear-gradient(135deg, #F27A6F, var(--g-red) 60%, #C6392C); }
+.gem-yellow { background: linear-gradient(135deg, #FFD65C, var(--g-yellow) 60%, #E0A800); color: #3A2A00; text-shadow: 0 1px 3px rgba(255,255,255,.5); }
+.gem-green  { background: linear-gradient(135deg, #5EC57E, var(--g-green) 60%, #24853F); }
+.gem-violet { background: linear-gradient(135deg, #8A7BFF, var(--primary) 60%, #3F32B5); }
+
+/* Table rows: coloured status stripe, subtle hover slide */
+tr[data-status] { border-left: 6px solid transparent; transition: background .25s ease, transform .25s ease; }
+tr[data-status="OK"] { border-left-color: var(--g-green); }
+tr[data-status="MISMATCH"] { border-left-color: var(--g-red); }
+tr[data-status="NEEDS_REVIEW"] { border-left-color: var(--g-yellow); }
+tr[data-status="NONE"] { border-left-color: var(--g-blue); }
+tbody tr:hover { background: color-mix(in srgb, var(--accent) 70%, transparent); }
 
 /* Native shell: keep the sticky header below the system status bar. */
 .native header.sticky { padding-top: max(env(safe-area-inset-top, 0px), 32px); }
-.native body { padding-bottom: env(safe-area-inset-bottom, 0px); }
 
 .skip-link {
   @apply sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground;

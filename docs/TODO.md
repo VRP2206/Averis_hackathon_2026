@@ -8,7 +8,8 @@ Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00.
 - [x] HTTP API with reviewer override (`sdoc/api.py`)
 - [x] Web dashboard: Inbox, Compare, Invoices, Impact, translation + legal/accessibility pages (`web/`)
 - [x] Real mail in: IMAP connector + .eml upload (`sdoc/mail.py`)
-- [x] Android wrapper via Capacitor (`web/android/`)
+- [x] Android wrapper via Capacitor (`web/android/`), prebuilt `apk/sdoc-debug.apk`, `scripts/demo-android.ps1`, `docs/DEMO-ANDROID.md`
+- [x] Help page + `docs/USER-GUIDE.md`: sample emails, Gmail/Outlook connection steps
 - [x] Docs: README, PLAN, ARCHITECTURE, HANDOFF, COMPLIANCE, pitch deck, video script
 
 ## Must do before submitting

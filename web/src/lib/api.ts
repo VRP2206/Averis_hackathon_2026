@@ -99,7 +99,18 @@ export interface TranslationResult {
   llm_provider: string;
 }
 
-export const API_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") || "http://127.0.0.1:8000";
+export const DEFAULT_API_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") || "http://127.0.0.1:8000";
+
+function savedApiUrl(): string {
+  try { return localStorage.getItem("sdoc.apiUrl") || ""; } catch { return ""; }
+}
+// A runtime override (Settings dialog) wins over the build-time default, so the
+// same APK / static build can point at any laptop or the cloud without a rebuild.
+export const API_URL = savedApiUrl().replace(/\/$/, "") || DEFAULT_API_URL;
+
+export function setApiUrl(url: string) {
+  try { url ? localStorage.setItem("sdoc.apiUrl", url.trim()) : localStorage.removeItem("sdoc.apiUrl"); } catch { /* ignore */ }
+}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(API_URL + path, { headers: { "Content-Type": "application/json" }, ...init });

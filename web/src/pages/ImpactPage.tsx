@@ -31,7 +31,7 @@ export function ImpactPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Impact</h1>
+        <h1 className="hover-sheen inline-block">Impact</h1>
         <p className="text-sm text-muted-foreground">Computed live from the API. Accuracy figures are measured on the hackathon dataset provided by the organisers (synthetic), not on production mail.</p>
       </div>
 
@@ -39,9 +39,9 @@ export function ImpactPage() {
         <h2 id="ops" className="mb-2 text-sm font-medium text-muted-foreground">Operations</h2>
         <Stats items={[
           { label: "Emails processed", value: ops.total },
-          { label: "Checks auto-completed", value: ops.auto, tone: "ok" },
-          { label: "Escalated to a person", value: ops.escalated, tone: "warn" },
-          { label: "Mismatches found", value: ops.mismatches, tone: "bad" },
+          { label: "Checks auto-completed", value: ops.auto, tone: "green" },
+          { label: "Escalated to a person", value: ops.escalated, tone: "yellow" },
+          { label: "Mismatches found", value: ops.mismatches, tone: "red" },
         ]} />
         <p className="mt-2 text-xs text-muted-foreground">
           Decisions by rule {ops.rule} · by AI model {ops.llm} · by human {ops.human}. Estimated reviewer time saved ≈ {ops.minutesSaved} min, assuming 4 min per manual check (assumption, not measured).

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Illustration: emails flow from a mailbox through SDOC to a checked Bill of Lading">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8F0FE"/><stop offset="1" stop-color="#F1EEFF"/></linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4285F4"/><stop offset=".5" stop-color="#5B4BD6"/><stop offset="1" stop-color="#EA4335"/></linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#1F1B3A" flood-opacity=".22"/></filter>
+    <style>
+      .float { animation: fl 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+      .f2 { animation-delay: -1.3s } .f3 { animation-delay: -2.6s }
+      @keyframes fl { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+      .dash { stroke-dasharray: 10 12; animation: mv 2.4s linear infinite; }
+      @keyframes mv { to { stroke-dashoffset: -44 } }
+      @media (prefers-reduced-motion: reduce) { .float, .dash { animation: none } }
+    </style>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#bg)"/>
+
+  <!-- mailbox (left) -->
+  <g filter="url(#sh)">
+    <rect x="42" y="120" width="120" height="130" rx="18" fill="#FFFFFF"/>
+    <rect x="42" y="120" width="120" height="44" rx="18" fill="#EA4335"/>
+    <rect x="42" y="150" width="120" height="14" fill="#EA4335"/>
+    <rect x="66" y="184" width="72" height="12" rx="6" fill="#E6E2F5"/>
+    <rect x="66" y="206" width="52" height="12" rx="6" fill="#E6E2F5"/>
+  </g>
+  <text x="102" y="285" text-anchor="middle" font-family="Fredoka, Nunito, sans-serif" font-size="18" font-weight="600" fill="#1F1B3A">Inbox</text>
+
+  <!-- flying envelopes -->
+  <g class="float" filter="url(#sh)"><rect x="180" y="96" width="54" height="38" rx="8" fill="#fff"/><path d="M184 102l23 17 23-17" fill="none" stroke="#4285F4" stroke-width="4" stroke-linecap="round"/></g>
+  <g class="float f2" filter="url(#sh)"><rect x="196" y="160" width="54" height="38" rx="8" fill="#fff"/><path d="M200 166l23 17 23-17" fill="none" stroke="#FBBC04" stroke-width="4" stroke-linecap="round"/></g>
+  <g class="float f3" filter="url(#sh)"><rect x="180" y="224" width="54" height="38" rx="8" fill="#fff"/><path d="M184 230l23 17 23-17" fill="none" stroke="#34A853" stroke-width="4" stroke-linecap="round"/></g>
+
+  <!-- flow lines -->
+  <path class="dash" d="M240 115 C 280 115, 280 180, 310 180" fill="none" stroke="#4285F4" stroke-width="4" stroke-linecap="round"/>
+  <path class="dash" d="M256 179 L 310 180" fill="none" stroke="#FBBC04" stroke-width="4" stroke-linecap="round"/>
+  <path class="dash" d="M240 243 C 280 243, 280 180, 310 180" fill="none" stroke="#34A853" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- SDOC core -->
+  <g filter="url(#sh)">
+    <circle cx="360" cy="180" r="54" fill="url(#core)"/>
+    <text x="360" y="188" text-anchor="middle" font-family="Fredoka, Nunito, sans-serif" font-size="24" font-weight="600" fill="#fff">SDOC</text>
+  </g>
+
+  <!-- outputs -->
+  <path class="dash" d="M414 160 C 450 140, 460 130, 490 118" fill="none" stroke="#34A853" stroke-width="4" stroke-linecap="round"/>
+  <path class="dash" d="M414 200 C 450 220, 460 230, 490 242" fill="none" stroke="#EA4335" stroke-width="4" stroke-linecap="round"/>
+
+  <g filter="url(#sh)">
+    <rect x="496" y="78" width="110" height="80" rx="14" fill="#fff"/>
+    <circle cx="522" cy="104" r="12" fill="#34A853"/><path d="M515 104l5 5 9-10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <text x="542" y="109" font-family="Nunito, sans-serif" font-size="15" font-weight="700" fill="#1E7A3F">OK</text>
+    <rect x="512" y="126" width="80" height="8" rx="4" fill="#E6E2F5"/><rect x="512" y="140" width="56" height="8" rx="4" fill="#E6E2F5"/>
+  </g>
+  <g filter="url(#sh)">
+    <rect x="496" y="202" width="110" height="80" rx="14" fill="#fff"/>
+    <circle cx="522" cy="228" r="12" fill="#EA4335"/><path d="M517 223l10 10M527 223l-10 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <text x="542" y="233" font-family="Nunito, sans-serif" font-size="15" font-weight="700" fill="#B3261E">Mismatch</text>
+    <rect x="512" y="250" width="80" height="8" rx="4" fill="#FCE8E6"/><rect x="512" y="264" width="56" height="8" rx="4" fill="#E6E2F5"/>
+  </g>
+  <text x="551" y="312" text-anchor="middle" font-family="Fredoka, Nunito, sans-serif" font-size="18" font-weight="600" fill="#1F1B3A">Draft BL checked</text>
+</svg>

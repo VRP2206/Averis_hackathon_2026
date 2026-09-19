@@ -14,7 +14,7 @@ Averis × Monash Hackathon 2026. An AI-assisted pipeline that triages a shipping
 
 Run `sdoc run` to reproduce. Tests: `pytest` (49 tests, ~2 s).
 
-Docs: [docs/TODO.md](docs/TODO.md) (what's left) · [PLAN.md](PLAN.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/HANDOFF.md](docs/HANDOFF.md) · [docs/COMPLIANCE.md](docs/COMPLIANCE.md) · [docs/pitch/](docs/pitch/) (deck + video script) · [web/README.md](web/README.md) (dashboard + Android)
+Docs: [docs/TODO.md](docs/TODO.md) (what's left) · [PLAN.md](PLAN.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/HANDOFF.md](docs/HANDOFF.md) · [docs/COMPLIANCE.md](docs/COMPLIANCE.md) · [docs/pitch/](docs/pitch/) (deck + video script) · [docs/USER-GUIDE.md](docs/USER-GUIDE.md) · [docs/DEMO-ANDROID.md](docs/DEMO-ANDROID.md) (show the app from any laptop) · [web/README.md](web/README.md)
 
 ## Quick start
 
@@ -57,6 +57,8 @@ cd web && npm install && npm run dev      # dashboard at http://localhost:5173
 ## Repo layout
 
 ```
+apk/                  prebuilt Android APK (sdoc-debug.apk); see docs/DEMO-ANDROID.md
+scripts/              demo-android.ps1: start API + emulator + app in one go
 web/                  React dashboard + Capacitor Android project (web/android)
 sdoc/                 the pipeline package (see docs/ARCHITECTURE.md)
   classify.py         Stage 1  rules -> LLM cascade

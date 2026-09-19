@@ -38,7 +38,7 @@ export function MailSources({ onChange }: { onChange: () => void }) {
   }
 
   return (
-    <section aria-labelledby="sources" className="rounded-xl border bg-card p-4">
+    <section aria-labelledby="sources" className="lift rounded-2xl border-l-8 border-l-g-blue bg-card p-5">
       <div className="flex flex-wrap items-center gap-3">
         <h2 id="sources" className="flex items-center gap-2 text-base font-semibold"><Mail className="size-5 text-primary" aria-hidden="true" />Email sources</h2>
         <p className="text-sm text-muted-foreground">
@@ -106,8 +106,8 @@ function ConnectDialog({ open, onOpenChange, onConnected }: { open: boolean; onO
             <div><Label htmlFor="imap-limit">Latest N messages</Label><Input id="imap-limit" type="number" min={1} max={500} value={limit} onChange={(e) => setLimit(Number(e.target.value))} /></div>
           </div>
           <label className="flex items-start gap-2 text-sm">
-            <input type="checkbox" className="mt-1 size-4" checked={consent} onChange={(e) => setConsent(e.target.checked)} required />
-            I am authorised to connect this mailbox, and I understand its emails and attachments will be processed as described in the <Link className="underline" to="/privacy">privacy policy</Link>.
+            <input type="checkbox" className="mt-1 size-4 shrink-0" checked={consent} onChange={(e) => setConsent(e.target.checked)} required />
+            <span>I am authorised to connect this mailbox, and I understand its emails and attachments will be processed as described in the <Link className="underline" to="/privacy">privacy policy</Link>.</span>
           </label>
           {err && <p role="alert" className="text-sm text-bad">{err}</p>}
           <DialogFooter>

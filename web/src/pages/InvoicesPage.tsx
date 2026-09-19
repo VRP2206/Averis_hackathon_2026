@@ -26,7 +26,7 @@ export function InvoicesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Invoices and receipts</h1>
+        <h1 className="hover-sheen inline-block">Invoices and receipts</h1>
         <p className="text-sm text-muted-foreground">Billing emails with the invoice numbers, order references and amounts found in them. Values are read from the email text; hover a number to see the line it came from.</p>
       </div>
 
@@ -43,7 +43,7 @@ export function InvoicesPage() {
       {error && <p role="alert" className="text-sm text-bad">Could not load invoices: {error}. Process the inbox first.</p>}
       {rows && rows.length === 0 && <p className="text-sm text-muted-foreground">No billing emails yet. Choose <strong>Process inbox</strong> on the Inbox page.</p>}
 
-      <div className="overflow-x-auto rounded-md border">
+      <div className="lift overflow-x-auto rounded-2xl border bg-card">
         <Table>
           <caption className="sr-only">Billing emails, {filtered.length} shown</caption>
           <TableHeader><TableRow>

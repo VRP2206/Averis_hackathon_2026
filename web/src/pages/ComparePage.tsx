@@ -252,8 +252,8 @@ function OverrideDialog({ open, onOpenChange, result, onSaved }:
             <p className="mt-1 text-xs text-muted-foreground">Stored with this decision so the team can see who approved it. Leave as "reviewer" to stay anonymous. See our <Link className="underline" to="/privacy">privacy policy</Link>.</p>
           </div>
           <label className="flex items-start gap-2 text-sm">
-            <input type="checkbox" className="mt-0.5 size-4" checked={consent} onChange={(e) => setConsent(e.target.checked)} required />
-            I understand this decision and my name will be recorded in the audit trail.
+            <input type="checkbox" className="mt-1 size-4 shrink-0" checked={consent} onChange={(e) => setConsent(e.target.checked)} required />
+            <span>I understand this decision and my name will be recorded in the audit trail.</span>
           </label>
           {err && <p role="alert" className="text-sm text-bad">{err}</p>}
           <DialogFooter>

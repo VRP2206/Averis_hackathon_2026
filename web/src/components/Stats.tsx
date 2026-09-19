@@ -1,21 +1,26 @@
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export interface StatItem { label: string; value: string | number; hint?: string; tone?: "ok" | "bad" | "warn" }
+export interface StatItem { label: string; value: string | number; hint?: string; tone?: "blue" | "red" | "yellow" | "green" | "violet"; icon?: LucideIcon }
 
-// Compact KPI row; tone adds a coloured value but the label always carries the meaning.
+const TONES = ["blue", "red", "yellow", "green", "violet"] as const;
+
+/** KPI "gems": Google-colour gradient tiles that lift and gloss on hover. */
 export function Stats({ items }: { items: StatItem[] }) {
   return (
-    <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-      {items.map((it) => (
-        <div key={it.label} className="rounded-lg border bg-card p-4">
-          <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{it.label}</dt>
-          <dd className={cn("mt-1 text-2xl font-semibold tabular-nums",
-            it.tone === "ok" && "text-ok", it.tone === "bad" && "text-bad", it.tone === "warn" && "text-warn")}>
-            {it.value}
-          </dd>
-          {it.hint && <dd className="text-xs text-muted-foreground">{it.hint}</dd>}
-        </div>
-      ))}
+    <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      {items.map((it, i) => {
+        const Icon = it.icon;
+        return (
+          <div key={it.label} className={cn("gem lift rounded-2xl p-5", `gem-${it.tone ?? TONES[i % TONES.length]}`)}>
+            <dt className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide opacity-90">
+              {Icon && <Icon className="size-5" aria-hidden="true" />}{it.label}
+            </dt>
+            <dd className="mt-2 font-display text-5xl font-semibold leading-none tabular-nums">{it.value}</dd>
+            {it.hint && <dd className="mt-1 text-sm opacity-90">{it.hint}</dd>}
+          </div>
+        );
+      })}
     </dl>
   );
 }
