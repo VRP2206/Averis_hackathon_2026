@@ -7,7 +7,8 @@ const config: CapacitorConfig = {
   appId: "com.sdoc.app",
   appName: "SDOC",
   webDir: "dist",
-  android: { allowMixedContent: true },
+  // adjustMarginsForEdgeToEdge keeps the web view below the status bar on Android 15+.
+  android: { allowMixedContent: true, adjustMarginsForEdgeToEdge: "auto" },
   server: { androidScheme: "http", cleartext: true },
 };
 

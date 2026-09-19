@@ -76,7 +76,7 @@ output/               generated: submission.json, results_detail.json (gitignore
 
 ## Enabling the LLM
 
-Set in `.env`: `SDOC_LLM_PROVIDER=anthropic` + `ANTHROPIC_API_KEY`, or `SDOC_LLM_PROVIDER=bedrock` with AWS credentials. Replies are cached in `.cache/llm/` so reruns cost nothing. With Haiku 4.5 a full 520-email run is roughly US$1 even if every email hit the model; in practice the rules answer most of them first.
+Set in `.env`: `SDOC_LLM_PROVIDER=gemini` + `GEMINI_API_KEY` (free tier), `anthropic` + `ANTHROPIC_API_KEY`, or `bedrock` with AWS credentials. The LLM also powers `POST /translate/{id}` (language detection + translation, surfaced as a Translate control on the compare screen). Replies are cached in `.cache/llm/` so reruns cost nothing. With Haiku 4.5 a full 520-email run is roughly US$1 even if every email hit the model; in practice the rules answer most of them first.
 
 ## Team
 

@@ -68,6 +68,27 @@ export interface Metrics {
   end_to_end: { success: number; total: number; rate: number };
 }
 
+export interface InvoiceRecord {
+  email_id: string;
+  sender: string;
+  subject: string;
+  topic: string;
+  invoice_numbers: string[];
+  order_refs: string[];
+  amounts: string[];
+  evidence: string[];
+}
+
+export interface TranslationResult {
+  email_id: string;
+  source_language: string;
+  target_language: string;
+  translated: boolean;
+  text: string;
+  note: string;
+  llm_provider: string;
+}
+
 export const API_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") || "http://127.0.0.1:8000";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -90,7 +111,15 @@ export const api = {
   review: (id: string, body: { status: Status; defect_fields: string[]; reviewer: string }) =>
     request<EmailResult>(`/results/${id}/review`, { method: "PATCH", body: JSON.stringify(body) }),
   metrics: () => request<Metrics>("/metrics"),
+  invoices: () => request<InvoiceRecord[]>("/invoices"),
+  translate: (id: string, target: string) =>
+    request<TranslationResult>(`/translate/${id}`, { method: "POST", body: JSON.stringify({ target }) }),
 };
+
+export const LANGUAGES: Array<[string, string]> = [
+  ["en", "English"], ["ms", "Bahasa Melayu"], ["zh", "中文"], ["id", "Bahasa Indonesia"],
+  ["ta", "தமிழ்"], ["ja", "日本語"], ["ko", "한국어"], ["ar", "العربية"], ["es", "Español"], ["fr", "Français"],
+];
 
 export const FIELD_LABELS: Record<string, string> = {
   shipper: "Shipper",

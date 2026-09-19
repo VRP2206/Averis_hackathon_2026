@@ -22,7 +22,10 @@ class Settings(BaseSettings):
     output_dir: Path = REPO_ROOT / "output"
 
     # LLM. "none" = rules + heuristics only (free, offline).
-    llm_provider: Literal["none", "anthropic", "bedrock"] = "none"
+    llm_provider: Literal["none", "anthropic", "bedrock", "gemini"] = "none"
+    # Gemini (free tier available). Key from GEMINI_API_KEY.
+    gemini_fast_model: str = "gemini-2.5-flash"
+    gemini_strong_model: str = "gemini-2.5-pro"
     llm_cache_dir: Path = REPO_ROOT / ".cache" / "llm"
     # Cheap model for classification fallback / doc-type checks / extraction.
     llm_fast_model: str = "claude-haiku-4-5-20251001"

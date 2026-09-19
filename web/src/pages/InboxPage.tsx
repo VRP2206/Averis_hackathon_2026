@@ -101,10 +101,10 @@ export function InboxPage() {
           <TableHeader>
             <TableRow>
               <TableHead scope="col">Email</TableHead>
-              <TableHead scope="col">From</TableHead>
-              <TableHead scope="col">Category</TableHead>
-              <TableHead scope="col">Status</TableHead>
-              <TableHead scope="col">Fields</TableHead>
+              <TableHead scope="col" className="hidden md:table-cell">From</TableHead>
+              <TableHead scope="col" className="hidden md:table-cell">Category</TableHead>
+              <TableHead scope="col" className="hidden md:table-cell">Status</TableHead>
+              <TableHead scope="col" className="hidden md:table-cell">Fields</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -115,15 +115,19 @@ export function InboxPage() {
                     className="block truncate font-medium underline-offset-2 hover:underline focus-visible:underline">
                     {r.subject || "(no subject)"}
                   </Link>
+                  <div className="mt-1 flex flex-wrap items-center gap-2 md:hidden">
+                    <CategoryChip category={r.result.category} />
+                    {r.result.category === "BL_COMPARISON" && <StatusBadge status={r.result.status} />}
+                  </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span>{r.email_id}</span>
                     {r.attachments.length > 0 && <span className="inline-flex items-center gap-0.5"><Paperclip className="size-3" aria-hidden="true" />{r.attachments.length} <span className="sr-only">attachments</span></span>}
                   </div>
                 </TableCell>
-                <TableCell className="text-sm text-muted-foreground">{r.from}</TableCell>
-                <TableCell><CategoryChip category={r.result.category} /></TableCell>
-                <TableCell>{r.result.category === "BL_COMPARISON" ? <StatusBadge status={r.result.status} /> : <span className="text-xs text-muted-foreground">—</span>}</TableCell>
-                <TableCell className="text-xs">{r.result.defect_fields.join(", ")}</TableCell>
+                <TableCell className="hidden text-sm text-muted-foreground md:table-cell">{r.from}</TableCell>
+                <TableCell className="hidden md:table-cell"><CategoryChip category={r.result.category} /></TableCell>
+                <TableCell className="hidden md:table-cell">{r.result.category === "BL_COMPARISON" ? <StatusBadge status={r.result.status} /> : <span className="text-xs text-muted-foreground">-</span>}</TableCell>
+                <TableCell className="hidden text-xs md:table-cell">{r.result.defect_fields.join(", ")}</TableCell>
               </TableRow>
             ))}
             {rows && filtered.length === 0 && (

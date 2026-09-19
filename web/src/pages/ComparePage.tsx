@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Check, ClipboardCopy, Pencil } from "lucide-react";
-import { api, FIELD_LABELS, FIELDS, REASON_TEXT, type EmailRecord, type EmailResult, type Status } from "@/lib/api";
+import { api, FIELD_LABELS, FIELDS, LANGUAGES, REASON_TEXT, type EmailRecord, type EmailResult, type Status, type TranslationResult } from "@/lib/api";
+import { Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -79,6 +80,7 @@ export function ComparePage() {
         <Card>
           <CardHeader><CardTitle className="text-base">Email</CardTitle></CardHeader>
           <CardContent>
+            <TranslatePanel emailId={id} />
             <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-sm">{email.body}</pre>
             {email.attachments.length > 0 && (
               <ul className="mt-3 space-y-1 text-xs text-muted-foreground" aria-label="Attachments">
@@ -135,6 +137,47 @@ export function ComparePage() {
 
       <OverrideDialog open={overrideOpen} onOpenChange={setOverrideOpen} result={result}
         onSaved={(r) => { setResult(r); setNotice("Override saved."); }} />
+    </div>
+  );
+}
+
+function TranslatePanel({ emailId }: { emailId: string }) {
+  const [target, setTarget] = useState(() => { try { return localStorage.getItem("sdoc.lang") || "en"; } catch { return "en"; } });
+  const [busy, setBusy] = useState(false);
+  const [t, setT] = useState<TranslationResult | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => { setT(null); setErr(null); }, [emailId]);
+
+  async function run() {
+    setBusy(true); setErr(null);
+    try { localStorage.setItem("sdoc.lang", target); } catch { /* ignore */ }
+    try { setT(await api.translate(emailId, target)); } catch (e) { setErr((e as Error).message); } finally { setBusy(false); }
+  }
+
+  return (
+    <div className="mb-3 space-y-2">
+      <form className="flex flex-wrap items-end gap-2" onSubmit={(e) => { e.preventDefault(); run(); }}>
+        <div>
+          <Label htmlFor="lang">Translate to</Label>
+          <select id="lang" className="flex h-9 rounded-md border bg-transparent px-3 text-sm" value={target} onChange={(e) => setTarget(e.target.value)}>
+            {LANGUAGES.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
+          </select>
+        </div>
+        <Button type="submit" variant="outline" size="sm" disabled={busy}>
+          <Languages className="size-4" aria-hidden="true" />{busy ? "Translating…" : "Translate"}
+        </Button>
+      </form>
+      {err && <p role="alert" className="text-xs text-bad">{err}</p>}
+      {t && (
+        <div role="status" className="rounded-md border bg-accent/40 p-3 text-sm">
+          <p className="mb-1 text-xs text-muted-foreground">
+            Detected language: <strong>{t.source_language}</strong>.{" "}
+            {t.translated ? `Translated to ${t.target_language} by the AI model (${t.llm_provider}); check names and numbers against the original.` : t.note}
+          </p>
+          {t.translated && <pre className="max-h-72 overflow-auto whitespace-pre-wrap">{t.text}</pre>}
+        </div>
+      )}
     </div>
   );
 }

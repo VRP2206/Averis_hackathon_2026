@@ -104,6 +104,38 @@ def metrics():
     return Evaluator(settings.ground_truth).score(_store.submission())
 
 
+@app.get("/invoices")
+def invoices():
+    """Receipts view: invoice numbers, order refs and amounts from billing emails."""
+    from .invoices import InvoiceExtractor
+    cats = {r.email_id: r.category.value for r in _store.all()}
+    return [r.to_dict() for r in InvoiceExtractor().extract_all(pipeline().inbox.emails(), cats)]
+
+
+class TranslateRequest(BaseModel):
+    target: str = "en"
+
+
+_translator = None
+
+
+@app.post("/translate/{email_id}")
+def translate(email_id: str, req: TranslateRequest):
+    """Detect the email's language and translate body + subject to `target`."""
+    global _translator
+    from .llm import build_llm
+    from .translate import Translator
+    if _translator is None:
+        _translator = Translator(build_llm(settings))
+    try:
+        email = pipeline().inbox.get(email_id)
+    except FileNotFoundError:
+        raise HTTPException(404, "no such email")
+    t = _translator.translate(f"{email.subject}\n\n{email.body}", req.target)
+    return {"email_id": email_id, "source_language": t.source_language, "target_language": t.target_language,
+            "translated": t.translated, "text": t.text, "note": t.note, "llm_provider": settings.llm_provider}
+
+
 class ReviewPatch(BaseModel):
     status: Status
     defect_fields: list[str] = []

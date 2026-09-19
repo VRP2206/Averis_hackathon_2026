@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { BarChart3, Inbox, Moon, Ship, Sun } from "lucide-react";
+import { BarChart3, Inbox, Moon, Receipt, Ship, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { business } from "@/content/business";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,7 @@ function useTheme() {
 
 const nav = [
   { to: "/", label: "Inbox", icon: Inbox, end: true },
+  { to: "/invoices", label: "Invoices", icon: Receipt },
   { to: "/impact", label: "Impact", icon: BarChart3 },
 ];
 

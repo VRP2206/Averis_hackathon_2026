@@ -43,6 +43,7 @@ Or open `android/` in Android Studio and press Run. For a phone, install the APK
 
 - **Inbox** (`#/`): triaged list, filters, KPI strip, "Process inbox".
 - **Compare** (`#/emails/:id`): email body, SI vs BL field table with mismatch/missing highlighting, source-line tooltips, approve / override (with consent), drafted reply.
+- **Invoices** (`#/invoices`): billing emails with invoice numbers, order refs and amounts pulled from the text, with evidence tooltips.
 - **Impact** (`#/impact`): live operations counts and accuracy vs the answer key from `/metrics`.
 - Legal: `#/privacy`, `#/terms`, `#/cookies`, `#/accessibility`. See `../docs/COMPLIANCE.md`.
 

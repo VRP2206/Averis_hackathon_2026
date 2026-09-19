@@ -81,6 +81,35 @@ class BedrockClient(LLMClient):
         return self._parse_json("{" + resp["output"]["message"]["content"][0]["text"])
 
 
+class GeminiClient(LLMClient):
+    """Google Gemini via the REST API (no SDK dependency). Uses JSON mode."""
+
+    ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+
+    def __init__(self, fast_model: str, strong_model: str):
+        import os
+        self.api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        if not self.api_key:
+            raise LLMUnavailable("GEMINI_API_KEY not set")
+        self.fast_model, self.strong_model = fast_model, strong_model
+
+    def complete_json(self, system, user, *, strong=False, max_tokens=1024):
+        import urllib.request
+        body = json.dumps({
+            "systemInstruction": {"parts": [{"text": system}]},
+            "contents": [{"role": "user", "parts": [{"text": user}]}],
+            "generationConfig": {"temperature": 0, "maxOutputTokens": max_tokens,
+                                 "responseMimeType": "application/json"},
+        }).encode()
+        req = urllib.request.Request(
+            self.ENDPOINT.format(model=self.strong_model if strong else self.fast_model),
+            data=body, headers={"Content-Type": "application/json", "x-goog-api-key": self.api_key})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read())
+        text = data["candidates"][0]["content"]["parts"][0]["text"]
+        return self._parse_json(text)
+
+
 class CachedClient(LLMClient):
     """Caches replies on disk keyed by prompt hash, so reruns are free."""
 
@@ -100,12 +129,21 @@ class CachedClient(LLMClient):
 
 
 def build_llm(cfg: Settings) -> LLMClient:
+    # Provider SDKs read their keys from the process environment; make sure
+    # values from .env are there too (pydantic-settings keeps them private).
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        pass
     inner: LLMClient
     try:
         if cfg.llm_provider == "anthropic":
             inner = AnthropicClient(cfg.llm_fast_model, cfg.llm_strong_model)
         elif cfg.llm_provider == "bedrock":
             inner = BedrockClient(cfg.bedrock_region, cfg.bedrock_fast_model, cfg.bedrock_strong_model)
+        elif cfg.llm_provider == "gemini":
+            inner = GeminiClient(cfg.gemini_fast_model, cfg.gemini_strong_model)
         else:
             return NullClient()
     except Exception as exc:
