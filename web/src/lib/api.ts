@@ -8,6 +8,7 @@ export interface EmailSummary {
   email_id: string;
   from: string;
   subject: string;
+  source: "dataset" | "mailbox" | "upload";
   attachments: string[];
   result: { category: Category; status: Status; review_reason: ReviewReason | null; defect_fields: string[] };
 }
@@ -79,6 +80,15 @@ export interface InvoiceRecord {
   evidence: string[];
 }
 
+export interface MailboxStatus {
+  connected: boolean;
+  host?: string;
+  user?: string;
+  folder?: string;
+  cached?: number;
+  messages_in_folder?: number;
+}
+
 export interface TranslationResult {
   email_id: string;
   source_language: string;
@@ -112,6 +122,17 @@ export const api = {
     request<EmailResult>(`/results/${id}/review`, { method: "PATCH", body: JSON.stringify(body) }),
   metrics: () => request<Metrics>("/metrics"),
   invoices: () => request<InvoiceRecord[]>("/invoices"),
+  mailbox: () => request<MailboxStatus>("/mailbox"),
+  mailboxConnect: (body: { host: string; user: string; password: string; folder: string; limit: number }) =>
+    request<MailboxStatus & { fetched: number; processed: number }>("/mailbox/connect", { method: "POST", body: JSON.stringify(body) }),
+  mailboxRefresh: () => request<{ fetched: number; processed: number }>("/mailbox/refresh", { method: "POST" }),
+  mailboxDisconnect: () => request<MailboxStatus>("/mailbox", { method: "DELETE" }),
+  upload: async (file: File) => {
+    const fd = new FormData(); fd.append("file", file);
+    const res = await fetch(API_URL + "/upload", { method: "POST", body: fd });
+    if (!res.ok) throw new Error(`${res.status}: ${(await res.text()).slice(0, 200)}`);
+    return res.json() as Promise<EmailResult>;
+  },
   translate: (id: string, target: string) =>
     request<TranslationResult>(`/translate/${id}`, { method: "POST", body: JSON.stringify({ target }) }),
 };

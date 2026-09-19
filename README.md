@@ -52,7 +52,7 @@ sdoc serve                      # API
 cd web && npm install && npm run dev      # dashboard at http://localhost:5173
 ```
 
-Inbox, Compare (SI vs BL with evidence, approve/override, drafted reply) and Impact screens, plus Privacy / Terms / Cookies / Accessibility pages. The same build wraps into an Android APK with Capacitor: see [web/README.md](web/README.md).
+**Email in:** the hackathon dataset, a real mailbox over IMAP (Gmail with an App Password, Outlook, any provider) or an uploaded `.eml`; all three go through the same pipeline. Inbox, Compare (SI vs BL with evidence, approve/override, drafted reply, translate), Invoices and Impact screens, plus Privacy / Terms / Cookies / Accessibility pages. The same build wraps into an Android APK with Capacitor: see [web/README.md](web/README.md).
 
 ## Repo layout
 

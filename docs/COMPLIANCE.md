@@ -12,6 +12,8 @@ Scope: the SDOC web app (`web/`), the Android app (same code via Capacitor) and 
 | Pipeline results (category, status, evidence lines) | Generated | `output/results.json` / DynamoDB | Yes |
 | Reviewer overrides (`status`, `defect_fields`, `reviewer` name) | Typed by the reviewer | API → store | Yes; the reviewer name is personal data |
 | UI preferences (theme, filters) | The browser | `localStorage` only | On the device |
+| Mailbox credentials (IMAP host, address, app password) | Typed by the operator | Server memory for the session; used only to read the folder | Never written to disk or logs |
+| Emails and attachments from a connected mailbox or uploaded .eml | The operator's mailbox | Attachments cached on the server so the pipeline can read them; results stored | Until disconnect/cleanup |
 | Analytics, ads, tracking pixels | none | none | — |
 
 Personal data actually collected from real people: **only the reviewer's display name** on an override. Everything else in the dataset is synthetic. If the system is later pointed at a real inbox, it will process names, phone numbers and business addresses of shipping staff and customers, and the notes below become mandatory rather than advisory.
@@ -37,7 +39,7 @@ Personal data actually collected from real people: **only the reviewer's display
 - [x] Form consent on the only form that collects personal data (reviewer name)
 - [x] Collect only necessary data: reviewer name is optional and defaults to "reviewer"
 - [x] Analytics tracking: none included; `web/index.html` has no third-party scripts
-- [x] Third-party embeds: none; fonts are self-hosted system stack (no Google Fonts call)
+- [x] Third-party embeds: none; fonts (Fredoka, Nunito, OFL) are self-hosted via Fontsource, so no request goes to a font CDN
 - [x] Accessibility: semantic landmarks, skip link, focus rings, labelled controls, `aria-live` on status changes, keyboard-operable table and forms, `prefers-reduced-motion` respected
 - [x] Alt text: all meaningful images/icons labelled; decorative icons `aria-hidden`
 - [x] Colour contrast: status colours checked at ≥ 4.5:1 on both themes; status is never conveyed by colour alone (text label + icon)
@@ -50,6 +52,8 @@ Personal data actually collected from real people: **only the reviewer's display
 - [x] Local laws checked: PDPA 2010 and 2024 amendments, Copyright Act 1987, Computer Crimes Act 1997, Consumer Protection Act 1999, ECA 2006; GDPR for EU counterparties
 
 ## Risks flagged
+
+0. **Connecting a real mailbox** turns the demo into processing of real personal data (senders, phone numbers, addresses). The connect form requires the operator to confirm they are authorised; use a dedicated test mailbox for the demo, and an App Password rather than the account password. IMAP access is read-only.
 
 1. **Impersonation.** Do not use Averis/APRIL branding or imply endorsement. Keep the "student prototype" footer.
 2. **Real inbox use.** If connected to a real mailbox (finals roadmap), you become a data processor for Averis. You need: a written processing agreement, a PDPA notice to staff, breach notification within 72 h (PDPA Amendment Act 2024, in force 2025), and a data protection officer if processing is large-scale. Cross-border storage on AWS us-east-1 is a PDPA s.129 transfer; use an ap-southeast region (Singapore/Malaysia) to avoid the issue.

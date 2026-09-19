@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -36,8 +36,19 @@ _store: ResultStore = JsonFileStore(settings.output_dir / "results.json")
 def pipeline() -> Pipeline:
     global _pipeline
     if _pipeline is None:
-        _pipeline = build_pipeline(settings)
+        from .inbox import open_inbox
+        from .mail import CompositeInbox, UploadInbox
+        inbox = CompositeInbox(open_inbox(settings.data_dir))
+        inbox.add_source("upload", UploadInbox(settings.output_dir / "mail_cache" / "upload"))
+        _pipeline = build_pipeline(settings, inbox)
     return _pipeline
+
+
+def _inbox():
+    from .mail import CompositeInbox
+    ib = pipeline().inbox
+    assert isinstance(ib, CompositeInbox)
+    return ib
 
 
 @app.get("/health")
@@ -47,10 +58,77 @@ def health():
 
 @app.get("/emails")
 def emails():
-    return [{"email_id": e.email_id, "from": e.sender, "subject": e.subject,
+    ib = _inbox()
+    return [{"email_id": e.email_id, "from": e.sender, "subject": e.subject, "source": ib.source_of(e.email_id),
              "attachments": e.attachments, "result": (_store.get(e.email_id) or EmailResult(
                  email_id=e.email_id, category="GENERAL")).model_dump(mode="json", include={"category", "status", "review_reason", "defect_fields"})}
-            for e in pipeline().inbox.emails()]
+            for e in ib.emails()]
+
+
+# -- real mail in: IMAP mailbox and uploaded .eml ---------------------------------
+class MailboxConnect(BaseModel):
+    host: str = "imap.gmail.com"
+    user: str
+    password: str            # Gmail: an App Password; held in memory only
+    folder: str = "INBOX"
+    limit: int = 50
+
+
+@app.post("/mailbox/connect")
+def mailbox_connect(req: MailboxConnect):
+    """Connect an IMAP mailbox, pull the latest messages and process them."""
+    from .mail import ImapInbox
+    src = ImapInbox(req.host, req.user, req.password, settings.output_dir / "mail_cache" / "imap",
+                    folder=req.folder, limit=req.limit)
+    try:
+        total = src.test()
+        fresh = src.refresh()
+    except Exception as exc:
+        raise HTTPException(400, f"could not connect: {exc}")
+    _inbox().add_source("mailbox", src)
+    results = pipeline().run(fresh)
+    _store.put_many(results.values())
+    return {"connected": True, "host": req.host, "user": req.user, "folder": req.folder,
+            "messages_in_folder": total, "fetched": len(fresh), "processed": len(results)}
+
+
+@app.post("/mailbox/refresh")
+def mailbox_refresh():
+    src = _inbox().sources.get("mailbox")
+    if src is None:
+        raise HTTPException(404, "no mailbox connected")
+    fresh = src.refresh()                         # type: ignore[attr-defined]
+    results = pipeline().run(fresh)
+    _store.put_many(results.values())
+    return {"fetched": len(fresh), "processed": len(results)}
+
+
+@app.delete("/mailbox")
+def mailbox_disconnect():
+    _inbox().remove_source("mailbox")
+    return {"connected": False}
+
+
+@app.get("/mailbox")
+def mailbox_status():
+    src = _inbox().sources.get("mailbox")
+    if src is None:
+        return {"connected": False}
+    return {"connected": True, "host": src.host, "user": src.user, "folder": src.folder,   # type: ignore[attr-defined]
+            "cached": len(src.emails())}
+
+
+@app.post("/upload")
+async def upload_eml(file: UploadFile = File(...)):
+    """Upload one .eml (raw email with attachments); it is processed at once."""
+    raw = await file.read()
+    if not raw:
+        raise HTTPException(400, "empty file")
+    up = _inbox().sources["upload"]
+    e = up.add(raw, file.filename or "upload")      # type: ignore[attr-defined]
+    r = pipeline().process(e)
+    _store.put(r)
+    return r
 
 
 @app.get("/emails/{email_id}")

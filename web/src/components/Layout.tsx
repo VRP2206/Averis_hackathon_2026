@@ -31,16 +31,16 @@ export function Layout() {
   return (
     <div className="flex min-h-svh flex-col">
       <a href="#main" className="skip-link">Skip to main content</a>
-      <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4">
-          <NavLink to="/" className="flex items-center gap-2 font-semibold">
-            <Ship className="size-5 text-primary" aria-hidden="true" />
-            <span>{business.productName}</span>
+      <header className="header-band sticky top-0 z-40 border-b backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
+          <NavLink to="/" className="flex items-center gap-2">
+            <Ship className="size-6 text-primary" aria-hidden="true" />
+            <span className="sheen font-display text-2xl font-semibold">{business.productName}</span>
           </NavLink>
           <nav aria-label="Primary" className="flex items-center gap-1">
             {nav.map(({ to, label, icon: Icon, end }) => (
               <NavLink key={to} to={to} end={end}
-                className={({ isActive }) => cn("flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm",
+                className={({ isActive }) => cn("flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[0.95rem] font-semibold",
                   isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-accent/60")}>
                 <Icon className="size-4" aria-hidden="true" />{label}
               </NavLink>

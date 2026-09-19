@@ -6,7 +6,8 @@ Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00.
 
 - [x] Core pipeline, 1.000 on the dataset, 49 tests (`sdoc/`, `tests/`)
 - [x] HTTP API with reviewer override (`sdoc/api.py`)
-- [x] Web dashboard: Inbox, Compare, Impact + legal/accessibility pages (`web/`)
+- [x] Web dashboard: Inbox, Compare, Invoices, Impact, translation + legal/accessibility pages (`web/`)
+- [x] Real mail in: IMAP connector + .eml upload (`sdoc/mail.py`)
 - [x] Android wrapper via Capacitor (`web/android/`)
 - [x] Docs: README, PLAN, ARCHITECTURE, HANDOFF, COMPLIANCE, pitch deck, video script
 
@@ -18,7 +19,7 @@ Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00.
 | 2 | Deploy the API: Lambda + Mangum + Function URL, data in S3 or bundled | backend | `docs/HANDOFF.md` → Backend. Test `/health`, `/emails`, `POST /process`. |
 | 3 | `DynamoDBStore(ResultStore)` and switch `api.py` to it | backend | 3 methods. `JsonFileStore` works meanwhile. |
 | 4 | Set `VITE_API_URL` to the deployed API and build the web app; deploy to Amplify Hosting (or Netlify/Vercel free) | frontend | `cd web && npm run build` |
-| 5 | Fill placeholders: team name, member names, contact email in `web/src/content/business.ts`, deck title slide | all | Search for `TODO` and `[TEAM NAME]` |
+| 5 | Fill placeholders: member names, contact email (team name done: Claude's Plan) in `web/src/content/business.ts`, deck title slide | all | Search for `TODO` and `[TEAM NAME]` |
 | 6 | Build the APK: `cd web && npm run build && npx cap sync android && cd android && ./gradlew assembleDebug` | frontend | Needs `JAVA_HOME` = Android Studio's `jbr`. Upload APK to Drive, link in slides. |
 | 7 | Export slides: `npx @marp-team/marp-cli docs/pitch/deck.md --pdf` → upload PDF to Drive (Anyone with link → Viewer) | pitch | Or paste into Google Slides. |
 | 8 | Record the video (≤ 5:00) following `docs/pitch/video-script.md`; upload Unlisted | pitch | Rehearse the 2-min demo twice. |
@@ -36,7 +37,7 @@ Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00.
 
 - [ ] SQS + worker Lambda for `POST /process`
 - [ ] OCR reader for image-only PDFs (Textract or Tesseract) as a `DocumentReader`
-- [ ] Live mailbox connector (Microsoft Graph) behind `InboxRepository`
+- [ ] Gmail add-on / Outlook add-in so staff trigger a check from inside their mail client (IMAP connector already done)
 - [ ] Learn label synonyms from reviewer corrections
 - [ ] Move AWS region to ap-southeast-1 for PDPA cross-border reasons
 

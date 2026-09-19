@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { CategoryChip, StatusBadge } from "@/components/StatusBadge";
 import { Stats } from "@/components/Stats";
+import { MailSources } from "@/components/MailSources";
 
 const CATEGORIES: Array<Category | "ALL"> = ["ALL", "BL_COMPARISON", "SI_REQUEST", "INVOICE_QUERY", "GENERAL", "SPAM"];
 const STATUSES: Array<Status | "ALL"> = ["ALL", "OK", "MISMATCH", "NEEDS_REVIEW"];
@@ -63,6 +64,8 @@ export function InboxPage() {
         </Button>
       </div>
       <p className="sr-only" aria-live="polite">{announce}</p>
+
+      <MailSources onChange={load} />
 
       <Stats items={[
         { label: "Emails", value: counts.total },
@@ -121,6 +124,7 @@ export function InboxPage() {
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span>{r.email_id}</span>
+                    {r.source !== "dataset" && <span className="rounded-full bg-info-bg px-1.5 py-0.5 font-semibold text-info">{r.source}</span>}
                     {r.attachments.length > 0 && <span className="inline-flex items-center gap-0.5"><Paperclip className="size-3" aria-hidden="true" />{r.attachments.length} <span className="sr-only">attachments</span></span>}
                   </div>
                 </TableCell>

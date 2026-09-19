@@ -3,64 +3,73 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Palette: slate neutrals with a harbour-blue accent. Status colours are
-   checked at >= 4.5:1 against their backgrounds in both themes. */
+/* Fonts are self-hosted (Fontsource, OFL) so no request goes to a font CDN.
+   Fredoka: rounded display face for headings and the brand. Nunito: body. */
+
+/* Palette: indigo-violet primary with Gmail's red / green / yellow / blue for
+   status. Every status pairing is >= 4.5:1 in both themes and always
+   accompanied by text + icon. */
 :root {
-  --radius: 0.5rem;
-  --background: oklch(0.985 0.002 247);
-  --foreground: oklch(0.2 0.03 255);
+  --radius: 0.85rem;
+  --background: oklch(0.985 0.006 290);
+  --foreground: oklch(0.22 0.05 285);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.03 255);
+  --card-foreground: oklch(0.22 0.05 285);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.03 255);
-  --primary: oklch(0.45 0.11 240);
+  --popover-foreground: oklch(0.22 0.05 285);
+  --primary: oklch(0.5 0.2 285);            /* violet-blue */
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.01 247);
-  --secondary-foreground: oklch(0.25 0.03 255);
-  --muted: oklch(0.95 0.01 247);
-  --muted-foreground: oklch(0.45 0.02 255);
-  --accent: oklch(0.93 0.02 240);
-  --accent-foreground: oklch(0.25 0.03 255);
-  --destructive: oklch(0.5 0.19 27);
-  --border: oklch(0.9 0.01 247);
-  --input: oklch(0.9 0.01 247);
-  --ring: oklch(0.55 0.11 240);
-  --ok: oklch(0.42 0.12 150);
-  --ok-bg: oklch(0.95 0.04 150);
-  --bad: oklch(0.48 0.19 27);
-  --bad-bg: oklch(0.95 0.03 27);
-  --warn: oklch(0.5 0.12 75);
-  --warn-bg: oklch(0.96 0.05 85);
+  --secondary: oklch(0.95 0.02 290);
+  --secondary-foreground: oklch(0.3 0.06 285);
+  --muted: oklch(0.95 0.02 290);
+  --muted-foreground: oklch(0.47 0.04 285);
+  --accent: oklch(0.93 0.04 290);
+  --accent-foreground: oklch(0.3 0.06 285);
+  --destructive: oklch(0.55 0.21 27);
+  --border: oklch(0.9 0.02 290);
+  --input: oklch(0.9 0.02 290);
+  --ring: oklch(0.6 0.18 285);
+  /* Gmail-inspired status colours */
+  --ok: oklch(0.45 0.15 150);      --ok-bg: oklch(0.95 0.05 150);      /* green  #34A853 family */
+  --bad: oklch(0.5 0.21 27);       --bad-bg: oklch(0.95 0.04 27);      /* red    #EA4335 family */
+  --warn: oklch(0.52 0.14 80);     --warn-bg: oklch(0.96 0.07 90);     /* yellow #FBBC04 family */
+  --info: oklch(0.5 0.18 255);     --info-bg: oklch(0.94 0.04 255);    /* blue   #4285F4 family */
+  --sheen-a: oklch(0.62 0.22 290);
+  --sheen-b: oklch(0.65 0.2 250);
+  --sheen-c: oklch(0.7 0.2 330);
 }
 
 .dark {
-  --background: oklch(0.17 0.02 255);
-  --foreground: oklch(0.93 0.01 247);
-  --card: oklch(0.21 0.02 255);
-  --card-foreground: oklch(0.93 0.01 247);
-  --popover: oklch(0.21 0.02 255);
-  --popover-foreground: oklch(0.93 0.01 247);
-  --primary: oklch(0.72 0.11 235);
-  --primary-foreground: oklch(0.15 0.02 255);
-  --secondary: oklch(0.27 0.02 255);
-  --secondary-foreground: oklch(0.93 0.01 247);
-  --muted: oklch(0.27 0.02 255);
-  --muted-foreground: oklch(0.7 0.02 247);
-  --accent: oklch(0.3 0.03 240);
-  --accent-foreground: oklch(0.93 0.01 247);
-  --destructive: oklch(0.7 0.17 25);
+  --background: oklch(0.16 0.03 285);
+  --foreground: oklch(0.94 0.01 290);
+  --card: oklch(0.21 0.035 285);
+  --card-foreground: oklch(0.94 0.01 290);
+  --popover: oklch(0.21 0.035 285);
+  --popover-foreground: oklch(0.94 0.01 290);
+  --primary: oklch(0.76 0.15 285);
+  --primary-foreground: oklch(0.16 0.03 285);
+  --secondary: oklch(0.27 0.04 285);
+  --secondary-foreground: oklch(0.94 0.01 290);
+  --muted: oklch(0.27 0.04 285);
+  --muted-foreground: oklch(0.72 0.03 290);
+  --accent: oklch(0.31 0.06 285);
+  --accent-foreground: oklch(0.94 0.01 290);
+  --destructive: oklch(0.72 0.17 25);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.6 0.11 240);
-  --ok: oklch(0.8 0.14 150);
-  --ok-bg: oklch(0.3 0.06 150);
-  --bad: oklch(0.8 0.13 27);
-  --bad-bg: oklch(0.32 0.08 27);
-  --warn: oklch(0.85 0.13 85);
-  --warn-bg: oklch(0.34 0.07 80);
+  --ring: oklch(0.7 0.15 285);
+  --ok: oklch(0.82 0.16 150);      --ok-bg: oklch(0.3 0.07 150);
+  --bad: oklch(0.8 0.14 27);       --bad-bg: oklch(0.33 0.09 27);
+  --warn: oklch(0.86 0.14 88);     --warn-bg: oklch(0.34 0.08 85);
+  --info: oklch(0.8 0.12 255);     --info-bg: oklch(0.3 0.07 255);
+  --sheen-a: oklch(0.78 0.16 290);
+  --sheen-b: oklch(0.8 0.14 250);
+  --sheen-c: oklch(0.82 0.15 330);
 }
 
 @theme inline {
+  --font-sans: "Nunito Variable", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Fredoka Variable", "Nunito Variable", "Segoe UI", system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -83,21 +92,40 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-ok: var(--ok);
-  --color-ok-bg: var(--ok-bg);
-  --color-bad: var(--bad);
-  --color-bad-bg: var(--bad-bg);
-  --color-warn: var(--warn);
-  --color-warn-bg: var(--warn-bg);
+  --color-ok: var(--ok);       --color-ok-bg: var(--ok-bg);
+  --color-bad: var(--bad);     --color-bad-bg: var(--bad-bg);
+  --color-warn: var(--warn);   --color-warn-bg: var(--warn-bg);
+  --color-info: var(--info);   --color-info-bg: var(--info-bg);
 }
 
 @layer base {
   * { @apply border-border outline-ring/50; }
-  body { @apply bg-background text-foreground; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  html { font-size: 17px; }
+  @media (min-width: 1024px) { html { font-size: 18px; } }
+  body { @apply bg-background text-foreground font-sans; line-height: 1.55; }
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: 0.01em; }
   :focus-visible { @apply outline-2 outline-offset-2 outline-ring; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
+}
+
+/* Brand / heading sheen: violet -> blue -> pink gradient text with a slow shimmer. */
+.sheen {
+  background: linear-gradient(100deg, var(--sheen-a), var(--sheen-b) 45%, var(--sheen-c) 75%, var(--sheen-a));
+  background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: sheen 9s linear infinite;
+}
+@keyframes sheen { to { background-position: -250% 0; } }
+@media (prefers-reduced-motion: reduce) { .sheen { animation: none; } }
+
+/* Page header band with a soft violet-blue glow */
+.header-band {
+  background:
+    radial-gradient(60rem 12rem at 10% -40%, color-mix(in oklch, var(--sheen-a) 22%, transparent), transparent 70%),
+    radial-gradient(40rem 10rem at 90% -30%, color-mix(in oklch, var(--sheen-b) 18%, transparent), transparent 70%),
+    color-mix(in oklch, var(--background) 92%, transparent);
 }
 
 /* Native shell: keep the sticky header below the system status bar. */

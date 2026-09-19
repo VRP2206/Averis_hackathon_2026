@@ -15,7 +15,7 @@ style: |
 # SDOC — Shipping Document Check
 ## Averis × Monash Hackathon 2026
 
-**Team [TEAM NAME]** · [Member 1] · [Member 2] · [Member 3]
+**Team Claude's Plan** · [Member 1] · [Member 2] · [Member 3]
 
 <span class="small">AI-assisted triage of a shipping-documentation inbox, with a deterministic SI-vs-BL check and a human in the loop.</span>
 
@@ -35,7 +35,7 @@ Averis's documentation team receives hundreds of emails a day. Mixed in are requ
 
 ## What we built
 
-A pipeline plus a reviewer dashboard (web + Android):
+A pipeline plus a reviewer dashboard (web + Android) that reads a **real mailbox over IMAP** (Gmail, Outlook) or an uploaded `.eml`, as well as the hackathon dataset:
 
 1. **Classify** every email: BL comparison, SI request, invoice query, general, spam
 2. **Read** the attachments: txt, PDF, Word, Excel
@@ -73,7 +73,7 @@ email -> classify -> gate -> read SI + BL -> extract 7 fields -> compare -> OK /
 ```
 
 - Rules and label-synonym matching handle the regular cases for free
-- Claude (Anthropic API or Amazon Bedrock) is a drop-in fallback in two places, never in the comparison
+- An LLM (Gemini, Claude API or Amazon Bedrock) is a drop-in fallback in two places, never in the comparison
 - The comparison cannot hallucinate: ports match on name **and** UN/LOCODE, weights in kg, parties normalised
 
 ---
@@ -82,7 +82,7 @@ email -> classify -> gate -> read SI + BL -> extract 7 fields -> compare -> OK /
 
 - **Pipeline** (Python): one class per stage behind an abstract base; `build_pipeline()` injects them
 - **API** (FastAPI): inbox, results with evidence, reviewer override, live metrics
-- **Dashboard** (React + Capacitor): Inbox, Compare, Impact; same code ships as a web app and an Android APK
+- **Dashboard** (React + Capacitor): Inbox, Compare, Invoices, Impact, translation; same code ships as a web app and an Android APK
 - **Cloud** (AWS Free Plan, $0): Lambda + Function URL, DynamoDB, S3, Amplify Hosting, Bedrock
 
 Stateless per email → maps straight onto SQS + Lambda workers for scale.
@@ -132,7 +132,7 @@ A blank is uncertainty, not a discrepancy. The reviewer sees the reason and the 
 
 **Now:** minutes per email → seconds; zero false alarms means reviewers trust the queue.
 
-**Next (finals):** live Outlook/Gmail mailbox · SQS workers · OCR for scanned PDFs · learn new label synonyms from reviewer corrections · Outlook add-in.
+**Next (finals):** Gmail add-on / Outlook add-in · SQS workers · OCR for scanned PDFs · learn new label synonyms from reviewer corrections · Outlook add-in.
 
 **Measures of success:** end-to-end catch rate, false-alarm rate, % auto-handled vs escalated, reviewer minutes saved.
 

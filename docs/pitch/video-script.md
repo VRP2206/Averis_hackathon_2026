@@ -4,7 +4,7 @@ Every 30 s over 5:00 costs a mark, so rehearse once with a timer. Record at 1080
 
 | Time | Shot | Say |
 |---|---|---|
-| 0:00–0:20 | Title slide | "Hi, we're **[Team]**: [names]. This is **SDOC**, a shipping document check for the Averis × Monash Hackathon." |
+| 0:00–0:20 | Title slide | "Hi, we're **Claude's Plan**: [names]. This is **SDOC**, a shipping document check for the Averis × Monash Hackathon." |
 | 0:20–1:00 | Slide 2, then one real email + its two attachments open side by side | "Averis's documentation team gets hundreds of emails a day. Some ask them to confirm a carrier's draft Bill of Lading against the Shipping Instruction. Today that's a person comparing seven fields by eye, across files where the same field has different names. *Port of Discharge* here is *POD* there. A wrong port on a released BL means fees and delays." |
 | 1:00–1:30 | Slide "How" | "Our rule: AI reads, code decides. Rules and label matching handle the regular cases free. Claude is the fallback for messy emails and missed fields. The comparison itself is plain, tested code, so it can't hallucinate." |
 | 1:30–1:45 | Slide "Architecture" | "Python pipeline, FastAPI, a React dashboard that ships as a website and an Android app, all on the AWS free plan: Lambda, DynamoDB, Bedrock." |
