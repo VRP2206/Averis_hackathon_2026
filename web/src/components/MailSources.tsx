@@ -94,7 +94,7 @@ function ConnectDialog({ open, onOpenChange, onConnected }: { open: boolean; onO
           </DialogHeader>
           <div>
             <Label htmlFor="provider">Provider</Label>
-            <select id="provider" className="flex h-10 w-full rounded-md border bg-transparent px-3" value={host} onChange={(e) => setHost(e.target.value)}>
+            <select id="provider" className="w-full" value={host} onChange={(e) => setHost(e.target.value)}>
               {Object.entries(PRESETS).map(([n, h]) => <option key={h} value={h}>{n}</option>)}
             </select>
           </div>

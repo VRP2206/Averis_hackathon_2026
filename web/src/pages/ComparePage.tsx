@@ -160,7 +160,7 @@ function TranslatePanel({ emailId }: { emailId: string }) {
       <form className="flex flex-wrap items-end gap-2" onSubmit={(e) => { e.preventDefault(); run(); }}>
         <div>
           <Label htmlFor="lang">Translate to</Label>
-          <select id="lang" className="flex h-9 rounded-md border bg-transparent px-3 text-sm" value={target} onChange={(e) => setTarget(e.target.value)}>
+          <select id="lang" className="w-full" value={target} onChange={(e) => setTarget(e.target.value)}>
             {LANGUAGES.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
           </select>
         </div>
@@ -228,7 +228,7 @@ function OverrideDialog({ open, onOpenChange, result, onSaved }:
           </DialogHeader>
           <div>
             <Label htmlFor="ov-status">Status</Label>
-            <select id="ov-status" className="flex h-9 w-full rounded-md border bg-transparent px-3 text-sm" value={status} onChange={(e) => setStatus(e.target.value as Status)}>
+            <select id="ov-status" className="w-full" value={status} onChange={(e) => setStatus(e.target.value as Status)}>
               <option value="OK">OK</option><option value="MISMATCH">Mismatch</option><option value="NEEDS_REVIEW">Needs review</option>
             </select>
           </div>

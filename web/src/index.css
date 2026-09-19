@@ -137,6 +137,18 @@
 .lift { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; box-shadow: 0 6px 20px -8px var(--shadow-ink); will-change: transform; }
 .lift:hover, .lift:focus-within { transform: translateY(-6px) scale(1.025); box-shadow: 0 22px 44px -14px var(--shadow-ink); }
 
+/* Soft lift: shadow only, no scaling (for lists and tables so they never cover controls) */
+.lift-soft { transition: box-shadow .35s ease; box-shadow: 0 6px 20px -8px var(--shadow-ink); }
+.lift-soft:hover { box-shadow: 0 18px 36px -14px var(--shadow-ink); }
+
+/* Native selects: readable options in both themes */
+select { color-scheme: light; }
+.dark select { color-scheme: dark; }
+select option { background: var(--card); color: var(--foreground); }
+select, .field { background: var(--card); color: var(--foreground); border: 1px solid var(--input); border-radius: .75rem; height: 2.75rem; padding: 0 .9rem; font-size: 1rem; box-shadow: 0 2px 8px -4px var(--shadow-ink); transition: border-color .2s, box-shadow .2s; }
+select:hover, .field:hover { border-color: var(--ring); }
+select:focus-visible { border-color: var(--ring); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ring) 30%, transparent); }
+
 /* Colour gems: KPI tiles in Google colours with a glossy highlight */
 .gem { position: relative; overflow: hidden; color: #fff; border: 0; text-shadow: 0 2px 6px rgba(0,0,0,.28); }
 .gem::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(255,255,255,.35), transparent 40%, transparent 60%, rgba(255,255,255,.18)); transform: translateX(-120%); transition: transform .9s ease; }
