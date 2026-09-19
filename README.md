@@ -2,7 +2,9 @@
 
 An AI pipeline that triages a shipping-documentation inbox and checks each draft Bill of Lading (BL) against its Shipping Instruction (SI).
 
-**Team brief** (challenge summary, scoring, deliverables and ideas): https://claude.ai/artifact/U4DB6zMHCuCw8cUT9shVoP
+**Team brief** (challenge summary, scoring, ideas): https://claude.ai/artifact/U4DB6zMHCuCw8cUT9shVoP
+
+**Build plan + backlog:** [PLAN.md](PLAN.md)
 
 ## The task
 For each of the 520 emails, output:
