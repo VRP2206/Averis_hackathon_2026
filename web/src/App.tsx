@@ -7,6 +7,7 @@ import { ComparePage } from "@/pages/ComparePage";
 import { ImpactPage } from "@/pages/ImpactPage";
 import { InvoicesPage } from "@/pages/InvoicesPage";
 import { HelpPage } from "@/pages/HelpPage";
+import { WhyPage } from "@/pages/WhyPage";
 import { AccessibilityPage, CookiesPage, PrivacyPage, TermsPage } from "@/pages/LegalPages";
 
 // HashRouter so the same build works on static hosting and inside the Android WebView.
@@ -19,6 +20,7 @@ export default function App() {
           <Route element={<Layout />}>
             <Route index element={<InboxPage />} />
             <Route path="emails/:id" element={<ComparePage />} />
+            <Route path="emails/:id/why" element={<WhyPage />} />
             <Route path="impact" element={<ImpactPage />} />
             <Route path="invoices" element={<InvoicesPage />} />
             <Route path="help" element={<HelpPage />} />

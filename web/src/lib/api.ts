@@ -45,6 +45,14 @@ export interface FieldComparison {
   match: boolean;
 }
 
+export interface TraceStep {
+  stage: "classify" | "read" | "gate" | "extract" | "compare" | "decide";
+  title: string;
+  outcome: "pass" | "fail" | "info" | "decision";
+  detail: string;
+  evidence: string[];
+}
+
 export interface EmailResult {
   email_id: string;
   category: Category;
@@ -53,11 +61,12 @@ export interface EmailResult {
   has_defect: boolean;
   defect_fields: string[];
   decided_by: string;
-  classification: { category: Category; decided_by: string; confidence: number; signals: string[] } | null;
+  classification: { category: Category; decided_by: string; confidence: number; signals: string[]; scores?: Record<string, number>; evidence?: string[] } | null;
   comparisons: FieldComparison[];
   extractions: Extraction[];
   notes: string[];
   draft_reply: string | null;
+  trace: TraceStep[];
 }
 
 export interface Metrics {

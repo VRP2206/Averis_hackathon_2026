@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Check, ClipboardCopy, Pencil } from "lucide-react";
+import { ArrowLeft, Check, ClipboardCopy, Pencil, Route } from "lucide-react";
 import { api, FIELD_LABELS, FIELDS, LANGUAGES, REASON_TEXT, type EmailRecord, type EmailResult, type Status, type TranslationResult } from "@/lib/api";
 import { Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -68,6 +68,7 @@ export function ComparePage() {
           <Button variant="outline" onClick={approve}><Check className="size-4" aria-hidden="true" />{t("compare.approve")}</Button>
           <Button variant="outline" onClick={() => setOverrideOpen(true)}><Pencil className="size-4" aria-hidden="true" />{t("compare.override")}</Button>
           {result.draft_reply && <Button onClick={copyDraft}><ClipboardCopy className="size-4" aria-hidden="true" />{t("compare.copy")}</Button>}
+          <Button asChild variant="outline"><Link to={`/emails/${id}/why`}><Route className="size-4" aria-hidden="true" />{t("why.open")}</Link></Button>
         </div>
       </div>
 

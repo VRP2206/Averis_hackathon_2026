@@ -14,7 +14,7 @@ from .extract import CascadeExtractor, Extractor, HeuristicExtractor, LLMExtract
 from .gate import GateContext, ReviewGate
 from .inbox import InboxRepository, open_inbox
 from .llm import build_llm
-from .models import Category, Document, DocType, Email, EmailResult, Status
+from .models import COMPARE_FIELDS, Category, Document, DocType, Email, EmailResult, Status, TraceStep
 from .readers import ReaderRegistry
 
 log = logging.getLogger(__name__)
@@ -33,40 +33,84 @@ class Pipeline:
         cls = self.classifier.classify(email)
         result = EmailResult(email_id=email.email_id, category=cls.category,
                              decided_by=cls.decided_by, classification=cls)
+        ranked = ", ".join(f"{k} {v:g}" for k, v in sorted(cls.scores.items(), key=lambda kv: -kv[1]))
+        self._step(result, "classify", f"Classified as {cls.category.value}", "decision",
+                   f"Decided by {cls.decided_by}, confidence {cls.confidence:.0%}." + (f" Points: {ranked}." if ranked else ""),
+                   cls.evidence)
         if cls.category == Category.BL_COMPARISON:
             self._compare_documents(email, result)
+        else:
+            self._step(result, "decide", "No document check needed", "info",
+                       "Only BL comparison emails have their attachments compared.")
         if self.drafter:
             result.draft_reply = self.drafter.draft(result, email.subject)
         return result
 
+    @staticmethod
+    def _step(result: EmailResult, stage: str, title: str, outcome: str = "info",
+              detail: str = "", evidence: Optional[list[str]] = None) -> None:
+        result.trace.append(TraceStep(stage=stage, title=title, outcome=outcome, detail=detail, evidence=evidence or []))
+
+    def _gate_steps(self, result: EmailResult, log: list) -> None:
+        for label, reason in log:
+            self._step(result, "gate", label, "fail" if reason else "pass",
+                       f"Failed: {reason.value}. We stop here and ask a person." if reason else "Passed.")
+
     def _compare_documents(self, email: Email, result: EmailResult) -> None:
         docs = [self._read(path) for path in email.attachments]
         ctx = GateContext(email=email, documents=docs)
+        self._step(result, "read", f"Read {len(docs)} attachment(s)", "info",
+                   "Each file is opened by its format and typed by its content, not its name.",
+                   [f"{d.path.rsplit('/', 1)[-1]}: {d.kind.upper()}, "
+                    + (f"detected as {d.doc_type.value}" if d.readable else f"unreadable ({d.error})")
+                    for d in docs] or ["no attachments"])
 
-        reason = self.gate.before_extraction(ctx)
+        log: list = []
+        reason = self.gate.before_extraction(ctx, log)
+        self._gate_steps(result, log)
         if reason:
             result.status, result.review_reason = Status.NEEDS_REVIEW, reason
             result.notes += [d.error for d in docs if d.error]
+            self._step(result, "decide", f"NEEDS_REVIEW: {reason.value}", "decision",
+                       "We cannot compare these documents safely, so a person decides instead of the tool guessing.")
             return
         if len(docs) < 2:
             result.notes.append("request for draft BL; nothing to compare")
+            self._step(result, "decide", "OK: nothing to compare yet", "decision",
+                       "The email asks for the draft BL rather than sending documents, so there is nothing to check.")
             return
 
         ctx.si = self.extractor.extract(self._pick(docs, DocType.SI))
         ctx.bl = self.extractor.extract(self._pick(docs, DocType.BL))
         result.extractions = [ctx.si, ctx.bl]
+        for ex in (ctx.si, ctx.bl):
+            self._step(result, "extract", f"Read 7 fields from the {ex.doc_type.value} ({ex.method})", "info",
+                       "Each value comes from the line quoted here. Labels differ between documents; we match them by meaning.",
+                       [f"{f}: {ex.fields[f].value!r}  <-  {ex.fields[f].source or 'not found'}" for f in COMPARE_FIELDS])
 
-        reason = self.gate.after_extraction(ctx)
+        log = []
+        reason = self.gate.after_extraction(ctx, log)
+        self._gate_steps(result, log)
         if reason:
             result.status, result.review_reason = Status.NEEDS_REVIEW, reason
             result.notes += [f"{ex.doc_type.value}: {f.field} {'blank' if f.blank else 'not found'}"
                              for ex in (ctx.si, ctx.bl) for f in ex.fields.values() if not f.usable]
+            self._step(result, "decide", f"NEEDS_REVIEW: {reason.value}", "decision",
+                       "A blank or missing value is uncertainty, not a mismatch, so a person decides.", result.notes)
             return
 
         result.comparisons = self.comparator.compare(ctx.si, ctx.bl)
         result.defect_fields = [c.field for c in result.comparisons if not c.match]
         result.has_defect = bool(result.defect_fields)
         result.status = Status.MISMATCH if result.has_defect else Status.OK
+        self._step(result, "compare", "Compared normalised values", "info",
+                   "Ports compare on name and UN/LOCODE, containers as a count, weights in kg, companies ignoring "
+                   "case and punctuation. This step is plain code, not AI.",
+                   [f"{'MATCH   ' if c.match else 'MISMATCH'} {c.field}: SI {c.si_normalised!r} vs BL {c.bl_normalised!r}"
+                    for c in result.comparisons])
+        verdict = f": {', '.join(result.defect_fields)}" if result.defect_fields else ": all 7 fields match"
+        self._step(result, "decide", result.status.value + verdict, "decision",
+                   "The draft BL needs amending." if result.has_defect else "The draft BL agrees with the SI.")
 
     def _read(self, path: str) -> Document:
         try:

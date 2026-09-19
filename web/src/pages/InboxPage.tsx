@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { AlertTriangle, CheckCircle2, Eraser, Mail, Paperclip, RefreshCw, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Eraser, Mail, Paperclip, RefreshCw, Route, XCircle } from "lucide-react";
 import { api, type Category, type EmailSummary, type Status } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -194,6 +194,12 @@ export function InboxPage() {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span>{r.email_id}</span>
                       {r.source !== "dataset" && <span className="rounded-full bg-info-bg px-2 py-0.5 text-xs font-bold text-info">{r.source}</span>}
+                      {r.result.status && (
+                        <Link to={`/emails/${r.email_id}/why`} aria-label={`${t("why.link")} ${r.subject}`}
+                          className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-primary transition hover:bg-primary hover:text-primary-foreground focus-visible:bg-primary focus-visible:text-primary-foreground">
+                          <Route className="size-3.5" aria-hidden="true" />{t("why.link")}
+                        </Link>
+                      )}
                       {r.attachments.length > 0 && <span className="inline-flex items-center gap-0.5"><Paperclip className="size-3.5" aria-hidden="true" />{r.attachments.length} <span className="sr-only">{t("col.attachments")}</span></span>}
                     </div>
                   </TableCell>

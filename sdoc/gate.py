@@ -23,6 +23,8 @@ class GateContext:
 
 
 class GateCheck(ABC):
+    label: str = "check"
+
     @abstractmethod
     def check(self, ctx: GateContext) -> Optional[ReviewReason]: ...
 
@@ -32,6 +34,7 @@ class AttachmentCheck(GateCheck):
     not a comparison and passes as not-comparable; an email that says the
     documents are attached (or compares them) but lacks them is escalated."""
 
+    label = "Both documents are attached"
     EXPECTS_DOCS = re.compile(
         r"(attached|attachment|please find|enclosed|compare the si|si and (the )?(draft )?bl|"
         r"still missing|been dropped|pfa\b)", re.I)
@@ -45,12 +48,15 @@ class AttachmentCheck(GateCheck):
 
 
 class ReadableCheck(GateCheck):
+    label = "Every attachment can be read"
+
     def check(self, ctx):
         return ReviewReason.UNREADABLE if any(not d.readable for d in ctx.documents) else None
 
 
 class DocTypeCheck(GateCheck):
     """Need exactly one SI and one BL among the readable documents."""
+    label = "One Shipping Instruction and one Bill of Lading"
 
     def check(self, ctx):
         if len(ctx.documents) < 2:
@@ -63,6 +69,7 @@ class DocTypeCheck(GateCheck):
 
 class ValueCheck(GateCheck):
     """A blank or unfound field on either side means we cannot decide."""
+    label = "All 7 fields have a value on both documents"
 
     def check(self, ctx):
         if ctx.si is None or ctx.bl is None:
@@ -81,16 +88,20 @@ class ReviewGate:
         # After extraction: are the values complete?
         self.post_checks = post_checks or [ValueCheck()]
 
-    def before_extraction(self, ctx: GateContext) -> Optional[ReviewReason]:
-        return self._run(self.pre_checks, ctx)
+    def before_extraction(self, ctx: GateContext, log: Optional[list] = None) -> Optional[ReviewReason]:
+        return self._run(self.pre_checks, ctx, log)
 
-    def after_extraction(self, ctx: GateContext) -> Optional[ReviewReason]:
-        return self._run(self.post_checks, ctx)
+    def after_extraction(self, ctx: GateContext, log: Optional[list] = None) -> Optional[ReviewReason]:
+        return self._run(self.post_checks, ctx, log)
 
     @staticmethod
-    def _run(checks, ctx):
+    def _run(checks, ctx, log):
+        """Run checks in order; the first failure wins. `log` collects
+        (label, reason-or-None) for the audit trail."""
         for c in checks:
             reason = c.check(ctx)
+            if log is not None:
+                log.append((c.label, reason))
             if reason is not None:
                 return reason
         return None

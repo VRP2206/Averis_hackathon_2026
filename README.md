@@ -43,6 +43,7 @@ email -> classify -> (BL_COMPARISON?) -> gate -> read SI + BL -> extract 7 field
 
 - **AI reads, code decides.** Rules and label-synonym matching handle the regular cases for free; an LLM (Claude via Anthropic API or Amazon Bedrock) is a drop-in fallback for classification and for fields the heuristics miss. The comparison itself is deterministic and unit-tested, so it cannot hallucinate.
 - **Never guesses.** A blank field, an image-only scan, a Commercial Invoice sent instead of a BL, or a dropped attachment becomes `NEEDS_REVIEW` with the reason, not a false mismatch.
+- **Every decision is explainable**: each email has a *Why?* page with the full audit trail.
 - **Every decision carries evidence**: the source line for each extracted value, normalised forms, which rule or model decided, and a drafted amendment email for reviewers to send.
 
 ## Dashboard (web + Android)

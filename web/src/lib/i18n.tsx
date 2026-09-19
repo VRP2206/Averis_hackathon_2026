@@ -44,6 +44,9 @@ const en = {
   "compare.match": "Match", "compare.mismatch": "Mismatch", "compare.missing": "Missing", "compare.hover": "Hover or focus a value to see the source line it was read from.",
   // other pages
   "invoices.title": "Invoices and receipts", "impact.title": "Impact", "help.title": "How to get your inbox in",
+  "why.link": "Why?", "why.title": "How we decided", "why.subtitle": "Every step the pipeline took for this email, with the exact text it relied on.",
+  "why.open": "See why", "why.back": "Back to the comparison", "why.steps": "steps",
+  "stage.classify": "Classify", "stage.read": "Read files", "stage.gate": "Safety check", "stage.extract": "Extract fields", "stage.compare": "Compare", "stage.decide": "Decision",
 };
 export type Key = keyof typeof en;
 
@@ -76,6 +79,9 @@ const ms: Partial<Record<Key, string>> = {
   "compare.field": "Medan", "compare.si": "SI", "compare.bl": "Draf BL", "compare.result": "Keputusan",
   "compare.match": "Padan", "compare.mismatch": "Tidak padan", "compare.missing": "Tiada", "compare.hover": "Tuding atau fokus pada nilai untuk melihat baris sumbernya.",
   "invoices.title": "Invois dan resit", "impact.title": "Impak", "help.title": "Cara memasukkan peti masuk anda",
+  "why.link": "Kenapa?", "why.title": "Bagaimana kami membuat keputusan", "why.subtitle": "Setiap langkah yang diambil untuk e-mel ini, dengan teks tepat yang digunakan.",
+  "why.open": "Lihat sebab", "why.back": "Kembali ke perbandingan", "why.steps": "langkah",
+  "stage.classify": "Kelaskan", "stage.read": "Baca fail", "stage.gate": "Semakan keselamatan", "stage.extract": "Ekstrak medan", "stage.compare": "Banding", "stage.decide": "Keputusan",
 };
 
 const zh: Partial<Record<Key, string>> = {
@@ -107,6 +113,9 @@ const zh: Partial<Record<Key, string>> = {
   "compare.field": "字段", "compare.si": "SI", "compare.bl": "提单草稿", "compare.result": "结果",
   "compare.match": "一致", "compare.mismatch": "不符", "compare.missing": "缺失", "compare.hover": "悬停或聚焦某个值以查看其来源行。",
   "invoices.title": "发票与收据", "impact.title": "成效", "help.title": "如何接入你的收件箱",
+  "why.link": "为什么？", "why.title": "我们如何做出判断", "why.subtitle": "流程对此邮件的每一步，以及所依据的原文。",
+  "why.open": "查看原因", "why.back": "返回比对", "why.steps": "步",
+  "stage.classify": "分类", "stage.read": "读取文件", "stage.gate": "安全检查", "stage.extract": "提取字段", "stage.compare": "比对", "stage.decide": "结论",
 };
 
 const DICT: Record<Lang, Partial<Record<Key, string>>> = { en, ms, zh };

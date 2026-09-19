@@ -1,0 +1,9 @@
+From: alert@webmail-verify.co
+To: docs@sdoc-demo.example
+Subject: URGENT: Your email storage is full - verify account immediately
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Dear user, your mailbox has exceeded its storage limit. Verify your account w=
+ithin 24 hours to avoid deactivation: http://webmail-verify.example/login

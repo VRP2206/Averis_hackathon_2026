@@ -63,3 +63,15 @@ def test_api_smoke(inbox, tmp_path, monkeypatch):
     patched = c.patch("/results/email_001/review", json={"status": "MISMATCH", "defect_fields": ["shipper"]}).json()
     assert patched["decided_by"] == "human" and patched["has_defect"] is True
     assert c.get("/submission").json()["email_001"]["defect_fields"] == ["shipper"]
+
+
+@pytest.mark.parametrize("email_id,last_title", [
+    ("email_025", "MISMATCH: port_of_discharge, container_count"),
+    ("email_501", "NEEDS_REVIEW: wrong_doc_type"),
+    ("email_002", "No document check needed"),
+])
+def test_trace_explains_the_decision(pipe, inbox, email_id, last_title):
+    """Every result carries an audit trail that starts with classification and ends with the verdict."""
+    r = pipe.process(inbox.get(email_id))
+    assert r.trace[0].stage == "classify" and r.trace[0].evidence
+    assert r.trace[-1].title == last_title

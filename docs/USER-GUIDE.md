@@ -31,6 +31,14 @@ Outlook / Microsoft 365: host `outlook.office365.com`. Yahoo: `imap.mail.yahoo.c
 
 Demo tip: email yourself the two attachments from `sample-mismatch.eml` with subject `TO CONFIRM DOCS _ demo`, then *Fetch new mail*.
 
+## Checking why
+
+Every processed email has a **Why?** link in the inbox (and a **See why** button on the compare screen). It opens a step-by-step trail: which words classified the email and how many points each earned, which safety checks passed, what each attachment was detected as, the exact line each of the 7 values was read from, the normalised values that were compared, and the final decision.
+
+## Test emails
+
+`docs/test-emails/` holds 13 `.eml` files, one per situation (mismatches, clean pair, wrong document, missing attachment, unreadable file, blank field, SI request, invoice, bot notice, spam, a Malay email). Upload them all at once with **Upload .eml**.
+
 ## Reading a result
 
 | Status | Meaning | What to do |

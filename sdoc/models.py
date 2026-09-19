@@ -108,6 +108,17 @@ class Classification(BaseModel):
     decided_by: str                  # rule | llm
     confidence: float
     signals: list[str] = []
+    scores: dict[str, float] = {}    # points per category (rules only)
+    evidence: list[str] = []         # human-readable "why" lines
+
+
+class TraceStep(BaseModel):
+    """One step of the audit trail shown on the "Why?" page."""
+    stage: str                       # classify | read | gate | extract | compare | decide
+    title: str
+    outcome: str = "info"            # pass | fail | info | decision
+    detail: str = ""
+    evidence: list[str] = []
 
 
 class EmailResult(BaseModel):
@@ -124,6 +135,7 @@ class EmailResult(BaseModel):
     extractions: list[Extraction] = []
     notes: list[str] = []
     draft_reply: Optional[str] = None
+    trace: list[TraceStep] = []
 
     def to_submission(self) -> dict:
         return {

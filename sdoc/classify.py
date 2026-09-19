@@ -55,44 +55,50 @@ class RuleClassifier(Classifier):
         body = strip_noise(email.body)
         scores: dict[Category, float] = {c: 0.0 for c in Category}
         signals: list[str] = []
+        evidence: list[str] = []
 
-        def hit(cat: Category, weight: float, name: str):
+        def hit(cat: Category, weight: float, name: str, why: str = ""):
             scores[cat] += weight
             signals.append(name)
+            evidence.append(f"+{weight:g} {cat.value}: {why or name}")
+
+        def found(rx: re.Pattern, text: str) -> str:
+            m = rx.search(text)
+            return f'"{m.group(0).strip()}"' if m else ""
 
         # SPAM: content signals + untrusted sender.
         spam_hits = len(self.SPAM_WORDS.findall(subject + "\n" + body))
         if spam_hits:
-            hit(Category.SPAM, 2.0 * spam_hits, f"spam_words={spam_hits}")
+            hit(Category.SPAM, 2.0 * spam_hits, f"spam_words={spam_hits}", f"{spam_hits} scam phrase(s), e.g. {found(self.SPAM_WORDS, subject + chr(10) + body)}")
         if self.SPAM_SENDER.search(email.sender.split("@")[-1]):
-            hit(Category.SPAM, 2.0, "spam_sender")
+            hit(Category.SPAM, 2.0, "spam_sender", f"untrusted sender domain {email.sender.split('@')[-1]}")
         if re.search(r"https?://", body) and spam_hits:
-            hit(Category.SPAM, 1.0, "spam_link")
+            hit(Category.SPAM, 1.0, "spam_link", "link in a message that already looks like a scam")
 
         # Subject-line codes are the strongest business signal.
         if self.SI_SUBJECT.search(subject):
-            hit(Category.SI_REQUEST, 4.0, "si_subject")
+            hit(Category.SI_REQUEST, 4.0, "si_subject", f"subject has SI code {found(self.SI_SUBJECT, subject)}")
         if self.BL_SUBJECT.search(subject):
-            hit(Category.BL_COMPARISON, 4.0, "bl_subject")
+            hit(Category.BL_COMPARISON, 4.0, "bl_subject", f"subject asks about a BL {found(self.BL_SUBJECT, subject)}")
         if self.CODED_SUBJECT.search(subject) and not self.SI_SUBJECT.search(subject):
-            hit(Category.BL_COMPARISON, 3.0, "coded_subject")
+            hit(Category.BL_COMPARISON, 3.0, "coded_subject", "subject uses the DEPT - POD - CARRIER(BL no.) shipment code")
         # Automated reports / bot notices ("_RPA_ ... Billing Process Completed")
         # mention billing but are not invoice queries, so they win outright.
         if self.GENERAL_SUBJECT.search(subject):
-            hit(Category.GENERAL, 5.0, "general_subject")
+            hit(Category.GENERAL, 5.0, "general_subject", f"subject is a report / bot notice {found(self.GENERAL_SUBJECT, subject)}")
         elif self.INVOICE_SUBJECT.search(subject):
-            hit(Category.INVOICE_QUERY, 3.5, "invoice_subject")
+            hit(Category.INVOICE_QUERY, 3.5, "invoice_subject", f"subject mentions billing {found(self.INVOICE_SUBJECT, subject)}")
 
         # Body corroboration.
         if self.BL_BODY.search(body):
-            hit(Category.BL_COMPARISON, 2.0, "bl_body")
+            hit(Category.BL_COMPARISON, 2.0, "bl_body", f"body asks to check a draft BL {found(self.BL_BODY, body)}")
         if self.SI_BODY.search(body):
-            hit(Category.SI_REQUEST, 2.0, "si_body")
+            hit(Category.SI_REQUEST, 2.0, "si_body", f"body talks about a Shipping Instruction {found(self.SI_BODY, body)}")
         if self.INVOICE_BODY.search(body):
-            hit(Category.INVOICE_QUERY, 1.0, "invoice_body")
+            hit(Category.INVOICE_QUERY, 1.0, "invoice_body", f"body mentions {found(self.INVOICE_BODY, body)}")
         if any(a.upper().endswith(("_SI.TXT", "_BL.TXT", "_SI.PDF", "_BL.PDF", "_BL.DOCX", "_SI.XLSX", "_BL.XLSX"))
                for a in email.attachments):
-            hit(Category.BL_COMPARISON, 1.5, "si_bl_attachments")
+            hit(Category.BL_COMPARISON, 1.5, "si_bl_attachments", "attachments are named as an SI and a BL")
 
         ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
         best, best_score = ranked[0]
@@ -100,7 +106,8 @@ class RuleClassifier(Classifier):
         if best_score == 0:
             best, best_score, margin = Category.GENERAL, 0.0, 0.0
         confidence = min(1.0, (best_score / 6.0) * (0.5 + min(margin, 3.0) / 6.0)) if best_score else 0.2
-        return Classification(category=best, decided_by="rule", confidence=confidence, signals=signals)
+        return Classification(category=best, decided_by="rule", confidence=confidence, signals=signals,
+                              scores={c.value: v for c, v in scores.items() if v}, evidence=evidence)
 
 
 class LLMClassifier(Classifier):
@@ -124,7 +131,8 @@ class LLMClassifier(Classifier):
                                   signals=["llm_unavailable"])
         return Classification(category=Category(reply["category"]), decided_by="llm",
                               confidence=float(reply.get("confidence", 0.5)),
-                              signals=[f"llm:{reply.get('reason', '')[:80]}"])
+                              signals=[f"llm:{reply.get('reason', '')[:80]}"],
+                              evidence=[f"AI model: {reply.get('reason', '')[:200]}"])
 
 
 class CascadeClassifier(Classifier):
@@ -142,4 +150,6 @@ class CascadeClassifier(Classifier):
         if llm.confidence <= 0.0:
             return rule
         llm.signals = rule.signals + llm.signals
+        llm.scores = rule.scores
+        llm.evidence = rule.evidence + [f"Rules were unsure (confidence {rule.confidence:.0%}), so the AI model decided."] + llm.evidence
         return llm

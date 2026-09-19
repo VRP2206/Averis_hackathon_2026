@@ -33,10 +33,18 @@ export function MailSources({ onChange }: { onChange: () => void }) {
     finally { setBusy(null); }
   }
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]; if (!f) return;
+    const files = Array.from(e.target.files ?? []); if (!files.length) return;
     setBusy("upload");
-    try { const r = await api.upload(f); setMsg(`Processed ${f.name}: ${r.category}${r.status ? ` / ${r.status}` : ""}.`); onChange(); }
-    catch (err) { setMsg((err as Error).message); } finally { setBusy(null); if (fileRef.current) fileRef.current.value = ""; }
+    const done: string[] = [];
+    try {
+      for (const f of files) {
+        const r = await api.upload(f);
+        done.push(`${f.name}: ${r.category}${r.category === "BL_COMPARISON" ? ` / ${r.status}` : ""}`);
+      }
+      setMsg(files.length === 1 ? `Processed ${done[0]}.` : `Processed ${done.length} emails. ${done.join(" · ")}`);
+      onChange();
+    }
+    catch (err) { setMsg(`${done.length} processed, then: ${(err as Error).message}`); } finally { setBusy(null); if (fileRef.current) fileRef.current.value = ""; }
   }
 
   return (
@@ -58,7 +66,7 @@ export function MailSources({ onChange }: { onChange: () => void }) {
           <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} disabled={busy === "upload"}>
             <Upload className="size-4" aria-hidden="true" />{busy === "upload" ? t("inbox.processing") : t("sources.upload")}
           </Button>
-          <input ref={fileRef} type="file" accept=".eml,message/rfc822" className="sr-only" onChange={onFile} aria-label="Upload an .eml email file" />
+          <input ref={fileRef} type="file" multiple accept=".eml,message/rfc822" className="sr-only" onChange={onFile} aria-label="Upload one or more .eml email files" />
         </div>
       </div>
       <p className="mt-2 text-sm" aria-live="polite">{msg}</p>
