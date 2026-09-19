@@ -1,101 +1,172 @@
 # SDOC — Shipping Document Check
 
-Averis × Monash Hackathon 2026. An AI-assisted pipeline that triages a shipping-documentation inbox and checks every draft Bill of Lading (BL) against its Shipping Instruction (SI), escalating anything it cannot decide to a human with a reason.
+**Team Claude's Plan** · Averis × Monash Hackathon 2026
 
-**Current result on the 520-email dataset (rules + heuristics, no LLM calls):**
+SDOC reads a shipping-documentation inbox, sorts every email, checks each draft Bill of Lading (BL) against its Shipping Instruction (SI), and hands anything it cannot decide to a person with the reason. It runs as a website and an Android app on top of one Python pipeline.
 
-| Metric | Score |
+![Inbox](docs/screenshots/inbox.png)
+
+## Results on the 520-email dataset
+
+Rules and heuristics only, no AI calls. Reproduce with `sdoc run`.
+
+| Metric | Result |
 |---|---|
-| Final score (organisers' formula) | **1.000** |
-| Classification macro-F1 (5 categories) | 1.000 |
-| Defects fully caught end-to-end (exact fields) | 46 / 46 |
-| False alarms (clean pair flagged as mismatch) | 0 |
-| NEEDS_REVIEW escalation recall / precision | 20/20 · 20/20 |
+| Final score (organisers' formula: 0.30 classify + 0.20 defect-F1 + 0.50 end-to-end) | **1.000** |
+| Classification accuracy, 5 categories | 100 % |
+| Defective BLs caught with the exact wrong fields | 46 / 46 |
+| False alarms on clean pairs | 0 |
+| Cases escalated to a person with the right reason | 20 / 20 |
+| Automated tests | 54 passing (`pytest`, ~2 s) |
 
-Run `sdoc run` to reproduce. Tests: `pytest` (49 tests, ~2 s).
+The dataset is synthetic, provided by the organisers. The AI layer is what carries the system to messier real mail.
 
-Docs: [docs/TODO.md](docs/TODO.md) (what's left) · [docs/PLAN.md](docs/PLAN.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/HANDOFF.md](docs/HANDOFF.md) · [docs/COMPLIANCE.md](docs/COMPLIANCE.md) · [docs/pitch/](docs/pitch/) (deck + video script) · [docs/USER-GUIDE.md](docs/USER-GUIDE.md) · [docs/DEMO-ANDROID.md](docs/DEMO-ANDROID.md) (show the app from any laptop) · [web/README.md](web/README.md)
+## Features
 
-## Quick start with Docker (one command)
+### Required by the challenge
+
+| Feature | Where |
+|---|---|
+| Sort every email into BL comparison, SI request, invoice query, general or spam | `sdoc/classify.py` |
+| Read SI and BL attachments in `.txt`, `.pdf`, `.docx` and `.xlsx` | `sdoc/readers.py` |
+| Find the 7 fields whatever they are labelled (*POD* = *Discharge Port*, *To the Order of* = *Consignee*) | `sdoc/extract.py` |
+| Compare them and name the exact fields that differ | `sdoc/compare.py` |
+| Escalate instead of guessing: missing attachment, unreadable file, wrong document type, blank value | `sdoc/gate.py` |
+| Scorer-ready `submission.json` for all 520 emails | `sdoc run` |
+| AI as a key component: Gemini, Claude API or Amazon Bedrock for classification fallback, field extraction and translation | `sdoc/llm.py` |
+| Cloud deployment path on AWS Free Plan (Lambda, DynamoDB, S3, Amplify, Bedrock) | `docs/PLAN.md`, `docs/HANDOFF.md` |
+
+### Trust and explainability
+
+| Feature | Where |
+|---|---|
+| **Why?** page for every email: the words that classified it and their points, each safety check, what each file was detected as, the line every value came from, and the compared values | Inbox → *Why?* |
+| Evidence on hover: every SI and BL value shows its source line | Compare screen |
+| The comparison is plain, tested code; AI never decides a match | `sdoc/compare.py` |
+| Reviewer **Approve** / **Override** with an audit trail of who decided | Compare screen |
+| Live accuracy against the answer key, labelled as synthetic-data results | Impact page |
+
+![Why page](docs/screenshots/why.png)
+
+### Getting email in
+
+| Feature | Where |
+|---|---|
+| Connect a real mailbox over read-only IMAP: Gmail (App Password), Outlook / Microsoft 365, Yahoo, any IMAP host | Inbox → *Connect mailbox* |
+| *Fetch new mail* and *Disconnect*; credentials held in memory only | Inbox |
+| Upload one or many `.eml` files | Inbox → *Upload .eml* |
+| Three one-click sample emails and a step-by-step Gmail guide | Help page |
+| 13 ready-made test emails covering every case, each verified | `docs/test-emails/` |
+
+### Convenience
+
+| Feature | Where |
+|---|---|
+| Drafted amendment email for every mismatch, and a resend request for escalations; copy in one click | Compare screen |
+| Click a KPI tile (e.g. *46 mismatches*) to filter the list and scroll to it | Inbox |
+| Search, plus separate Category, Status, Source and Sort filters, a live result count and Clear | Inbox |
+| **Invoices** page: invoice numbers, order refs and amounts pulled from billing emails, filter by topic | Invoices |
+| Translate any email into 10 languages with AI | Compare → *Translate* |
+| Change the API address in the app itself, so one build works on any laptop, phone or the cloud | Gear icon |
+
+### UI / UX
+
+| Feature | Where |
+|---|---|
+| Interface in **English, Bahasa Melayu and 中文**, switched from the globe in the header | Header |
+| Light (Gmail white) and dark themes | Moon / sun icon |
+| Google-colour status tiles, hover sheen on titles, cards that lift, drifting background colours | Whole site |
+| Status always shown with text and an icon, never colour alone | Badges |
+| Keyboard operable, skip link, visible focus, screen-reader labels, respects reduced motion | Whole site |
+| Responsive: tabs move under the title on narrow screens | Header |
+
+![Malay interface](docs/screenshots/malay.png)
+
+### Platforms and running it
+
+| Feature | Where |
+|---|---|
+| Website (React, static build) | `web/` |
+| Android app from the same code (Capacitor), prebuilt APK | `apk/sdoc-debug.apk` |
+| One-command demo of the Android app on a laptop | `scripts/demo-android.ps1`, `docs/DEMO-ANDROID.md` |
+| Docker: API and dashboard with one command | `docker compose up --build` |
+| Command line: `sdoc run`, `score`, `inspect`, `serve` | `sdoc/cli.py` |
+
+### Legal and privacy
+
+| Feature | Where |
+|---|---|
+| Privacy Policy, Terms of Use, Cookie Policy, Accessibility statement | Footer links |
+| No analytics, trackers, cookies or third-party scripts; fonts self-hosted | `docs/COMPLIANCE.md` |
+| Consent checkboxes on the mailbox and override forms | Forms |
+| Review against Malaysia's PDPA 2010 and other local law, with risks flagged | `docs/COMPLIANCE.md` |
+
+## Screenshots
+
+| Compare | Needs review |
+|---|---|
+| ![Compare](docs/screenshots/compare.png) | ![Needs review](docs/screenshots/needs-review.png) |
+
+| Invoices | Impact |
+|---|---|
+| ![Invoices](docs/screenshots/invoices.png) | ![Impact](docs/screenshots/impact.png) |
+
+| Help | Phone width |
+|---|---|
+| ![Help](docs/screenshots/help.png) | ![Phone width](docs/screenshots/mobile.png) |
+
+## Quick start
+
+### With Docker
 
 ```bash
 docker compose up --build
 # dashboard http://localhost:5173   API http://localhost:8000/docs
 ```
 
-Optional: put `.env` (Gemini key) in the repo root and `ground_truth.json` in `Provided Information/Other/data_v2/` first; both are picked up automatically. Then open the dashboard and click **Process inbox**.
-
-## Quick start without Docker
+### Without Docker
 
 ```bash
-py -3.12 -m venv .venv                # any Python 3.11+
-.venv\Scripts\activate                # Windows   (source .venv/bin/activate on macOS/Linux)
+py -3.12 -m venv .venv
+.venv\Scripts\activate                 # macOS/Linux: source .venv/bin/activate
 pip install -e ".[dev]"
-copy .env.example .env                # optional: add an LLM key later
+sdoc serve                             # API on http://127.0.0.1:8000
 
-sdoc run                              # -> output/submission.json + score vs ground truth
-sdoc inspect email_025                # full detail for one email (evidence, comparisons, draft reply)
-sdoc score output/submission.json --mistakes
-sdoc serve                            # HTTP API on http://127.0.0.1:8000  (docs at /docs)
-pytest
+# second terminal
+cd web
+npm install
+npm run dev                            # dashboard on http://localhost:5173
 ```
 
-## What it does
+Open the dashboard and click **Process inbox**. Two optional files are not in the repo: `.env` (the Gemini key, see `.env.example`) and the organisers' `ground_truth.json` in `Provided Information/Other/data_v2/` (for the accuracy panel).
+
+Other commands: `sdoc run` writes `output/submission.json` and prints the score, `sdoc inspect email_025` shows one email in full, and `pytest` runs the tests.
+
+## How it works
 
 ```
-email -> classify -> (BL_COMPARISON?) -> gate -> read SI + BL -> extract 7 fields -> compare -> OK / MISMATCH
-            |                              |                                                     + defect_fields
-            | rules first, LLM fallback    +-> NEEDS_REVIEW: missing_attachment | unreadable |   + draft reply
-            v                                                wrong_doc_type | missing_value
-      SI_REQUEST / INVOICE_QUERY / GENERAL / SPAM
+email -> classify -> (BL comparison?) -> safety checks -> read SI + BL -> extract 7 fields -> compare -> OK / MISMATCH
+          rules first,                    missing / unreadable /           rules first,        plain code,   + wrong fields
+          AI fallback                     wrong type / blank value         AI fills gaps       no AI         + drafted reply
+                                          -> NEEDS_REVIEW with reason
 ```
 
-- **AI reads, code decides.** Rules and label-synonym matching handle the regular cases for free; an LLM (Claude via Anthropic API or Amazon Bedrock) is a drop-in fallback for classification and for fields the heuristics miss. The comparison itself is deterministic and unit-tested, so it cannot hallucinate.
-- **Never guesses.** A blank field, an image-only scan, a Commercial Invoice sent instead of a BL, or a dropped attachment becomes `NEEDS_REVIEW` with the reason, not a false mismatch.
-- **Every decision is explainable**: each email has a *Why?* page with the full audit trail.
-- **Every decision carries evidence**: the source line for each extracted value, normalised forms, which rule or model decided, and a drafted amendment email for reviewers to send.
-
-## Dashboard (web + Android)
-
-```bash
-sdoc serve                      # API
-cd web && npm install && npm run dev      # dashboard at http://localhost:5173
-```
-
-**Email in:** the hackathon dataset, a real mailbox over IMAP (Gmail with an App Password, Outlook, any provider) or an uploaded `.eml`; all three go through the same pipeline. Inbox, Compare (SI vs BL with evidence, approve/override, drafted reply, translate), Invoices, Impact and Help screens; UI in English, Bahasa Melayu and Chinese (globe switcher in the header, no third-party translate widget), plus Privacy / Terms / Cookies / Accessibility pages. The same build wraps into an Android APK with Capacitor: see [web/README.md](web/README.md).
+Each stage is one class behind an abstract base, wired together in `build_pipeline()`, so any stage can be swapped or tested alone. Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Repo layout
 
 ```
-apk/                  prebuilt Android APK (sdoc-debug.apk); see docs/DEMO-ANDROID.md
-scripts/              demo-android.ps1: start API + emulator + app in one go
-web/                  React dashboard + Capacitor Android project (web/android)
-sdoc/                 the pipeline package (see docs/ARCHITECTURE.md)
-  classify.py         Stage 1  rules -> LLM cascade
-  readers.py          txt / pdf / docx / xlsx -> Document
-  doctype.py          SI / BL / invoice / packing list / CoO by content
-  extract.py          Stage 2  heuristic label matching -> LLM cascade
-  compare.py          Stage 3  per-field normalisers + Comparator
-  gate.py             NEEDS_REVIEW checks
-  pipeline.py         orchestration, build_pipeline()
-  evaluate.py         organisers' scoring formula + error analysis
-  api.py              FastAPI for the dashboard
-  cli.py              sdoc run | score | inspect | serve
-tests/                pytest suite
-Provided Information/ dataset and event documents (not in git except Participant Info)
-output/               generated: submission.json, results_detail.json (gitignored)
+sdoc/        pipeline package (classify, readers, doctype, extract, compare, gate, pipeline, api, cli)
+web/         React dashboard; web/android is the Capacitor Android project
+tests/       pytest suite
+docs/        plan, architecture, handoff, user guide, compliance, pitch deck, test emails, screenshots
+scripts/     Android demo launcher, test-email generator
+apk/         prebuilt Android APK
+Provided Information/Participant Info/   the hackathon dataset
 ```
 
-## Enabling the LLM
+## Documents
 
-Set in `.env`: `SDOC_LLM_PROVIDER=gemini` + `GEMINI_API_KEY` (free tier), `anthropic` + `ANTHROPIC_API_KEY`, or `bedrock` with AWS credentials. The LLM also powers `POST /translate/{id}` (language detection + translation, surfaced as a Translate control on the compare screen). Replies are cached in `.cache/llm/` so reruns cost nothing. With Haiku 4.5 a full 520-email run is roughly US$1 even if every email hit the model; in practice the rules answer most of them first.
+[What's left](docs/TODO.md) · [Plan](docs/PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Frontend/backend handoff](docs/HANDOFF.md) · [User guide](docs/USER-GUIDE.md) · [Android demo](docs/DEMO-ANDROID.md) · [Compliance](docs/COMPLIANCE.md) · [Pitch deck and video script](docs/pitch/) · [Test emails](docs/test-emails/)
 
-## Team
-
-Frontend: reviewer dashboard (see `docs/HANDOFF.md`). Backend: cloud deployment of `sdoc.api` (AWS Lambda + DynamoDB per `docs/PLAN.md`). Core pipeline: this package.
-
-## Screenshots
-
-| Inbox | Compare |
-|---|---|
-| ![Inbox](docs/screenshots/inbox.png) | ![Compare](docs/screenshots/compare.png) |
+Student prototype for the Averis × Monash Hackathon 2026. Not an Averis product.
