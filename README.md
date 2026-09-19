@@ -14,7 +14,7 @@ Averis × Monash Hackathon 2026. An AI-assisted pipeline that triages a shipping
 
 Run `sdoc run` to reproduce. Tests: `pytest` (49 tests, ~2 s).
 
-Docs: [PLAN.md](PLAN.md) (backlog, cloud, timeline) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/HANDOFF.md](docs/HANDOFF.md) (frontend + backend tasks, API contract)
+Docs: [docs/TODO.md](docs/TODO.md) (what's left) · [PLAN.md](PLAN.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/HANDOFF.md](docs/HANDOFF.md) · [docs/COMPLIANCE.md](docs/COMPLIANCE.md) · [docs/pitch/](docs/pitch/) (deck + video script) · [web/README.md](web/README.md) (dashboard + Android)
 
 ## Quick start
 
@@ -45,9 +45,19 @@ email -> classify -> (BL_COMPARISON?) -> gate -> read SI + BL -> extract 7 field
 - **Never guesses.** A blank field, an image-only scan, a Commercial Invoice sent instead of a BL, or a dropped attachment becomes `NEEDS_REVIEW` with the reason, not a false mismatch.
 - **Every decision carries evidence**: the source line for each extracted value, normalised forms, which rule or model decided, and a drafted amendment email for reviewers to send.
 
+## Dashboard (web + Android)
+
+```bash
+sdoc serve                      # API
+cd web && npm install && npm run dev      # dashboard at http://localhost:5173
+```
+
+Inbox, Compare (SI vs BL with evidence, approve/override, drafted reply) and Impact screens, plus Privacy / Terms / Cookies / Accessibility pages. The same build wraps into an Android APK with Capacitor: see [web/README.md](web/README.md).
+
 ## Repo layout
 
 ```
+web/                  React dashboard + Capacitor Android project (web/android)
 sdoc/                 the pipeline package (see docs/ARCHITECTURE.md)
   classify.py         Stage 1  rules -> LLM cascade
   readers.py          txt / pdf / docx / xlsx -> Document
@@ -71,3 +81,9 @@ Set in `.env`: `SDOC_LLM_PROVIDER=anthropic` + `ANTHROPIC_API_KEY`, or `SDOC_LLM
 ## Team
 
 Frontend: reviewer dashboard (see `docs/HANDOFF.md`). Backend: cloud deployment of `sdoc.api` (AWS Lambda + DynamoDB per `PLAN.md`). Core pipeline: this package.
+
+## Screenshots
+
+| Inbox | Compare |
+|---|---|
+| ![Inbox](docs/screenshots/inbox.png) | ![Compare](docs/screenshots/compare.png) |

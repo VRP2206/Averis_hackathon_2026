@@ -1,0 +1,224 @@
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, Check, ClipboardCopy, Pencil } from "lucide-react";
+import { api, FIELD_LABELS, FIELDS, REASON_TEXT, type EmailRecord, type EmailResult, type Status } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { CategoryChip, StatusBadge } from "@/components/StatusBadge";
+import { cn } from "@/lib/utils";
+
+export function ComparePage() {
+  const { id = "" } = useParams();
+  const [email, setEmail] = useState<EmailRecord | null>(null);
+  const [result, setResult] = useState<EmailResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState("");
+  const [overrideOpen, setOverrideOpen] = useState(false);
+
+  useEffect(() => {
+    setError(null);
+    api.email(id).then(setEmail).catch((e) => setError(e.message));
+    api.result(id).then(setResult).catch(async () => {
+      try { setResult(await api.processOne(id)); } catch (e) { setError((e as Error).message); }
+    });
+  }, [id]);
+
+  async function approve() {
+    if (!result) return;
+    const r = await api.review(id, { status: result.status, defect_fields: result.defect_fields, reviewer: reviewerName() });
+    setResult(r); setNotice("Result approved and recorded.");
+  }
+  async function copyDraft() {
+    if (!result?.draft_reply) return;
+    await navigator.clipboard.writeText(result.draft_reply);
+    setNotice("Draft reply copied to clipboard.");
+  }
+
+  if (error) return <p role="alert" className="text-bad">{error}</p>;
+  if (!email || !result) return <p aria-live="polite">Loading…</p>;
+
+  const si = result.extractions.find((e) => e.doc_type === "SI");
+  const bl = result.extractions.find((e) => e.doc_type === "BL");
+
+  return (
+    <div className="space-y-6">
+      <p className="sr-only" aria-live="polite">{notice}</p>
+      <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:underline"><ArrowLeft className="size-4" aria-hidden="true" />Back to inbox</Link>
+
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold leading-tight">{email.subject || "(no subject)"}</h1>
+          <p className="text-sm text-muted-foreground">{email.email_id} · from {email.from}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <CategoryChip category={result.category} />
+            {result.category === "BL_COMPARISON" && <StatusBadge status={result.status} />}
+            <span className="text-xs text-muted-foreground">decided by {result.decided_by}
+              {result.classification && ` · confidence ${(result.classification.confidence * 100).toFixed(0)}%`}</span>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={approve}><Check className="size-4" aria-hidden="true" />Approve result</Button>
+          <Button variant="outline" onClick={() => setOverrideOpen(true)}><Pencil className="size-4" aria-hidden="true" />Override result</Button>
+          {result.draft_reply && <Button onClick={copyDraft}><ClipboardCopy className="size-4" aria-hidden="true" />Copy draft reply</Button>}
+        </div>
+      </div>
+
+      {result.status === "NEEDS_REVIEW" && result.review_reason && (
+        <div role="status" className="rounded-md border border-warn bg-warn-bg p-3 text-sm text-warn">
+          <strong>Needs human review: {result.review_reason.replace("_", " ")}.</strong> {REASON_TEXT[result.review_reason]}
+          {result.notes.length > 0 && <ul className="mt-1 list-disc pl-5">{result.notes.map((n, i) => <li key={i}>{n}</li>)}</ul>}
+        </div>
+      )}
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+        <Card>
+          <CardHeader><CardTitle className="text-base">Email</CardTitle></CardHeader>
+          <CardContent>
+            <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-sm">{email.body}</pre>
+            {email.attachments.length > 0 && (
+              <ul className="mt-3 space-y-1 text-xs text-muted-foreground" aria-label="Attachments">
+                {email.attachments.map((a) => <li key={a}>{a.split("/").pop()}</li>)}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader><CardTitle className="text-base">Shipping Instruction vs draft Bill of Lading</CardTitle></CardHeader>
+          <CardContent>
+            {result.comparisons.length === 0 && !si ? (
+              <p className="text-sm text-muted-foreground">No comparison was made for this email.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <caption className="sr-only">Field-by-field comparison; mismatched rows are marked</caption>
+                  <TableHeader><TableRow>
+                    <TableHead scope="col">Field</TableHead><TableHead scope="col">SI</TableHead><TableHead scope="col">Draft BL</TableHead><TableHead scope="col">Result</TableHead>
+                  </TableRow></TableHeader>
+                  <TableBody>
+                    {FIELDS.map((f) => {
+                      const c = result.comparisons.find((x) => x.field === f);
+                      const sv = si?.fields[f]; const bv = bl?.fields[f];
+                      const bad = c ? !c.match : false;
+                      const missing = !c && (sv && !sv.value || bv && !bv.value || sv?.blank || bv?.blank);
+                      return (
+                        <TableRow key={f} className={cn(bad && "bg-bad-bg/60", missing && "bg-warn-bg/60")}>
+                          <TableHead scope="row" className="font-medium">{FIELD_LABELS[f]}</TableHead>
+                          <TableCell className="max-w-56 whitespace-normal break-words"><Evidence value={sv?.value ?? c?.si_value ?? null} source={sv?.source} blank={sv?.blank} /></TableCell>
+                          <TableCell className="max-w-56 whitespace-normal break-words"><Evidence value={bv?.value ?? c?.bl_value ?? null} source={bv?.source} blank={bv?.blank} /></TableCell>
+                          <TableCell className="text-xs font-semibold">
+                            {c ? (c.match ? <span className="text-ok">Match</span> : <span className="text-bad">Mismatch</span>) : missing ? <span className="text-warn">Missing</span> : "—"}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+                <p className="mt-2 text-xs text-muted-foreground">Hover or focus a value to see the source line it was read from.</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {result.draft_reply && (
+        <Card>
+          <CardHeader><CardTitle className="text-base">Drafted reply (a person sends it)</CardTitle></CardHeader>
+          <CardContent><pre className="whitespace-pre-wrap text-sm">{result.draft_reply}</pre></CardContent>
+        </Card>
+      )}
+
+      <OverrideDialog open={overrideOpen} onOpenChange={setOverrideOpen} result={result}
+        onSaved={(r) => { setResult(r); setNotice("Override saved."); }} />
+    </div>
+  );
+}
+
+function Evidence({ value, source, blank }: { value: string | null; source?: string | null; blank?: boolean }) {
+  if (value == null) return <span className="text-xs text-muted-foreground">not found</span>;
+  const text = blank ? `${value || "(blank)"} ` : value;
+  if (!source) return <span className="text-sm">{text}</span>;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild><button type="button" className="rounded text-left text-sm whitespace-normal underline decoration-dotted underline-offset-2">{text}</button></TooltipTrigger>
+      <TooltipContent className="max-w-sm font-mono text-xs">{source}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+function reviewerName() {
+  try { return localStorage.getItem("sdoc.reviewer") || "reviewer"; } catch { return "reviewer"; }
+}
+
+function OverrideDialog({ open, onOpenChange, result, onSaved }:
+  { open: boolean; onOpenChange: (o: boolean) => void; result: EmailResult; onSaved: (r: EmailResult) => void }) {
+  const [status, setStatus] = useState<Status>(result.status);
+  const [fields, setFields] = useState<string[]>(result.defect_fields);
+  const [reviewer, setReviewer] = useState(reviewerName());
+  const [consent, setConsent] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => { setStatus(result.status); setFields(result.defect_fields); }, [result]);
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault(); setErr(null); setSaving(true);
+    try {
+      try { localStorage.setItem("sdoc.reviewer", reviewer); } catch { /* ignore */ }
+      onSaved(await api.review(result.email_id, { status, defect_fields: status === "MISMATCH" ? fields : [], reviewer: reviewer || "reviewer" }));
+      onOpenChange(false);
+    } catch (ex) { setErr((ex as Error).message); } finally { setSaving(false); }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <form onSubmit={save} className="space-y-4">
+          <DialogHeader>
+            <DialogTitle>Override result</DialogTitle>
+            <DialogDescription>Your decision replaces the system's and is recorded in the audit trail.</DialogDescription>
+          </DialogHeader>
+          <div>
+            <Label htmlFor="ov-status">Status</Label>
+            <select id="ov-status" className="flex h-9 w-full rounded-md border bg-transparent px-3 text-sm" value={status} onChange={(e) => setStatus(e.target.value as Status)}>
+              <option value="OK">OK</option><option value="MISMATCH">Mismatch</option><option value="NEEDS_REVIEW">Needs review</option>
+            </select>
+          </div>
+          {status === "MISMATCH" && (
+            <fieldset>
+              <legend className="text-sm font-medium">Fields that differ</legend>
+              <div className="mt-1 grid grid-cols-2 gap-1">
+                {FIELDS.map((f) => (
+                  <label key={f} className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" className="size-4" checked={fields.includes(f)}
+                      onChange={(e) => setFields((cur) => e.target.checked ? [...cur, f] : cur.filter((x) => x !== f))} />
+                    {FIELD_LABELS[f]}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          )}
+          <div>
+            <Label htmlFor="reviewer">Your name (optional)</Label>
+            <Input id="reviewer" value={reviewer} onChange={(e) => setReviewer(e.target.value)} autoComplete="name" />
+            <p className="mt-1 text-xs text-muted-foreground">Stored with this decision so the team can see who approved it. Leave as "reviewer" to stay anonymous. See our <Link className="underline" to="/privacy">privacy policy</Link>.</p>
+          </div>
+          <label className="flex items-start gap-2 text-sm">
+            <input type="checkbox" className="mt-0.5 size-4" checked={consent} onChange={(e) => setConsent(e.target.checked)} required />
+            I understand this decision and my name will be recorded in the audit trail.
+          </label>
+          {err && <p role="alert" className="text-sm text-bad">{err}</p>}
+          <DialogFooter>
+            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={saving || !consent}>{saving ? "Saving…" : "Save override"}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
