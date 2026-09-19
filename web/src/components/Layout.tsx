@@ -38,12 +38,13 @@ export function Layout() {
       <div className="blobs" aria-hidden="true"><span className="b1" /><span className="b2" /><span className="b3" /><span className="b4" /></div>
       <a href="#main" className="skip-link">{t("nav.skip")}</a>
       <header className="sticky top-0 z-40 bg-background/85 backdrop-blur-md">
-        <div className="mx-auto flex h-20 max-w-7xl items-center gap-5 px-5">
-          <NavLink to="/" className="flex items-center gap-3">
+        {/* Wide screens: one row. Narrow screens: title + controls on top, tabs on a second row. */}
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-5 gap-y-2 px-5 py-3 lg:h-20 lg:flex-nowrap lg:py-0">
+          <NavLink to="/" className="flex shrink-0 items-center gap-3">
             <img src="/logo.svg" alt="" width="44" height="44" className="drop-shadow-md transition-transform duration-500 hover:rotate-[-8deg] hover:scale-110" />
-            <span className="sheen font-display text-4xl font-semibold">{business.productName}</span>
+            <span className="sheen font-display text-3xl font-semibold sm:text-4xl">{business.productName}</span>
           </NavLink>
-          <nav aria-label="Primary" className="flex items-center gap-1 overflow-x-auto">
+          <nav aria-label="Primary" className="order-last flex w-full flex-wrap items-center justify-center gap-1 lg:order-none lg:w-auto lg:justify-start">
             {nav.map(({ to, label, icon: Icon, end, color }) => (
               <NavLink key={to} to={to} end={end}
                 className={({ isActive }) => cn("flex items-center gap-2 rounded-full px-4 py-2 text-base font-bold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg",
@@ -52,11 +53,11 @@ export function Layout() {
               </NavLink>
             ))}
           </nav>
-          <div className="ml-auto flex items-center gap-2">
-            <label className="flex items-center gap-2 rounded-full border-2 border-g-blue/50 bg-card px-3 py-1.5 shadow-md transition hover:-translate-y-0.5 hover:shadow-lg">
+          <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
+            <label className="flex items-center gap-2 rounded-full border-2 border-g-blue/50 bg-card px-2.5 py-1.5 shadow-md transition hover:-translate-y-0.5 hover:shadow-lg sm:px-3">
               <Globe className="size-5 text-g-blue" aria-hidden="true" />
               <span className="sr-only">{t("nav.language")}</span>
-              <select aria-label={t("nav.language")} className="!h-auto !border-0 !bg-transparent !p-0 !shadow-none font-bold" value={lang} onChange={(e) => setLang(e.target.value as Lang)}>
+              <select aria-label={t("nav.language")} className="!h-auto max-w-[5.5rem] !border-0 !bg-transparent !p-0 !shadow-none font-bold sm:max-w-none" value={lang} onChange={(e) => setLang(e.target.value as Lang)}>
                 {LANGS.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
               </select>
             </label>
