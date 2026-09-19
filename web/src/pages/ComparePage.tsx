@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CategoryChip, StatusBadge } from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 
 export function ComparePage() {
   const { id = "" } = useParams();
@@ -20,6 +21,7 @@ export function ComparePage() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const [overrideOpen, setOverrideOpen] = useState(false);
+  const { t } = useT();
 
   useEffect(() => {
     setError(null);
@@ -49,7 +51,7 @@ export function ComparePage() {
   return (
     <div className="space-y-6">
       <p className="sr-only" aria-live="polite">{notice}</p>
-      <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:underline"><ArrowLeft className="size-4" aria-hidden="true" />Back to inbox</Link>
+      <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:underline"><ArrowLeft className="size-4" aria-hidden="true" />{t("compare.back")}</Link>
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
@@ -63,9 +65,9 @@ export function ComparePage() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={approve}><Check className="size-4" aria-hidden="true" />Approve result</Button>
-          <Button variant="outline" onClick={() => setOverrideOpen(true)}><Pencil className="size-4" aria-hidden="true" />Override result</Button>
-          {result.draft_reply && <Button onClick={copyDraft}><ClipboardCopy className="size-4" aria-hidden="true" />Copy draft reply</Button>}
+          <Button variant="outline" onClick={approve}><Check className="size-4" aria-hidden="true" />{t("compare.approve")}</Button>
+          <Button variant="outline" onClick={() => setOverrideOpen(true)}><Pencil className="size-4" aria-hidden="true" />{t("compare.override")}</Button>
+          {result.draft_reply && <Button onClick={copyDraft}><ClipboardCopy className="size-4" aria-hidden="true" />{t("compare.copy")}</Button>}
         </div>
       </div>
 
@@ -78,7 +80,7 @@ export function ComparePage() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <Card>
-          <CardHeader><CardTitle className="text-base">Email</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t("compare.email")}</CardTitle></CardHeader>
           <CardContent>
             <TranslatePanel emailId={id} />
             <pre className="max-h-96 overflow-auto whitespace-pre-wrap text-sm">{email.body}</pre>
@@ -91,7 +93,7 @@ export function ComparePage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-base">Shipping Instruction vs draft Bill of Lading</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t("compare.table")}</CardTitle></CardHeader>
           <CardContent>
             {result.comparisons.length === 0 && !si ? (
               <p className="text-sm text-muted-foreground">No comparison was made for this email.</p>
@@ -100,7 +102,7 @@ export function ComparePage() {
                 <Table>
                   <caption className="sr-only">Field-by-field comparison; mismatched rows are marked</caption>
                   <TableHeader><TableRow>
-                    <TableHead scope="col">Field</TableHead><TableHead scope="col">SI</TableHead><TableHead scope="col">Draft BL</TableHead><TableHead scope="col">Result</TableHead>
+                    <TableHead scope="col">{t("compare.field")}</TableHead><TableHead scope="col">{t("compare.si")}</TableHead><TableHead scope="col">{t("compare.bl")}</TableHead><TableHead scope="col">{t("compare.result")}</TableHead>
                   </TableRow></TableHeader>
                   <TableBody>
                     {FIELDS.map((f) => {
@@ -114,14 +116,14 @@ export function ComparePage() {
                           <TableCell className="max-w-56 whitespace-normal break-words"><Evidence value={sv?.value ?? c?.si_value ?? null} source={sv?.source} blank={sv?.blank} /></TableCell>
                           <TableCell className="max-w-56 whitespace-normal break-words"><Evidence value={bv?.value ?? c?.bl_value ?? null} source={bv?.source} blank={bv?.blank} /></TableCell>
                           <TableCell className="text-xs font-semibold">
-                            {c ? (c.match ? <span className="text-ok">Match</span> : <span className="text-bad">Mismatch</span>) : missing ? <span className="text-warn">Missing</span> : "—"}
+                            {c ? (c.match ? <span className="text-ok">{t("compare.match")}</span> : <span className="text-bad">{t("compare.mismatch")}</span>) : missing ? <span className="text-warn">{t("compare.missing")}</span> : "—"}
                           </TableCell>
                         </TableRow>
                       );
                     })}
                   </TableBody>
                 </Table>
-                <p className="mt-2 text-xs text-muted-foreground">Hover or focus a value to see the source line it was read from.</p>
+                <p className="mt-2 text-xs text-muted-foreground">{t("compare.hover")}</p>
               </div>
             )}
           </CardContent>
@@ -130,7 +132,7 @@ export function ComparePage() {
 
       {result.draft_reply && (
         <Card>
-          <CardHeader><CardTitle className="text-base">Drafted reply (a person sends it)</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t("compare.draft")}</CardTitle></CardHeader>
           <CardContent><pre className="whitespace-pre-wrap text-sm">{result.draft_reply}</pre></CardContent>
         </Card>
       )}
@@ -146,6 +148,7 @@ function TranslatePanel({ emailId }: { emailId: string }) {
   const [busy, setBusy] = useState(false);
   const [t, setT] = useState<TranslationResult | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const { t: tr } = useT();
 
   useEffect(() => { setT(null); setErr(null); }, [emailId]);
 
@@ -159,13 +162,13 @@ function TranslatePanel({ emailId }: { emailId: string }) {
     <div className="mb-3 space-y-2">
       <form className="flex flex-wrap items-end gap-2" onSubmit={(e) => { e.preventDefault(); run(); }}>
         <div>
-          <Label htmlFor="lang">Translate to</Label>
+          <Label htmlFor="lang">{tr("compare.translateTo")}</Label>
           <select id="lang" className="w-full" value={target} onChange={(e) => setTarget(e.target.value)}>
             {LANGUAGES.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
           </select>
         </div>
         <Button type="submit" variant="outline" size="sm" disabled={busy}>
-          <Languages className="size-4" aria-hidden="true" />{busy ? "Translating…" : "Translate"}
+          <Languages className="size-4" aria-hidden="true" />{busy ? tr("compare.translating") : tr("compare.translate")}
         </Button>
       </form>
       {err && <p role="alert" className="text-xs text-bad">{err}</p>}

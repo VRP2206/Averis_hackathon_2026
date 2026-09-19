@@ -5,6 +5,7 @@ import { api, type EmailResult } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/StatusBadge";
+import { useT } from "@/lib/i18n";
 
 const SAMPLES = [
   { file: "sample-mismatch.eml", label: "Mismatch: wrong port and container count" },
@@ -16,6 +17,7 @@ export function HelpPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [result, setResult] = useState<EmailResult | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const { t } = useT();
 
   async function trySample(file: string) {
     setBusy(file); setErr(null);
@@ -29,7 +31,7 @@ export function HelpPage() {
     <div className="space-y-10">
       <section className="grid items-center gap-8 lg:grid-cols-2">
         <div>
-          <h1 className="hover-sheen inline-block">How to get your inbox in</h1>
+          <h1 className="hover-sheen inline-block">{t("help.title")}</h1>
           <p className="mt-3 text-xl text-muted-foreground">Three ways in, one pipeline out. Start with a sample, then connect a real mailbox.</p>
         </div>
         <img src="/hero.svg" alt="Emails flow from a mailbox through SDOC and come out as checked Bills of Lading" className="lift w-full rounded-3xl" />

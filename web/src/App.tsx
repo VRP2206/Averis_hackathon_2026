@@ -1,5 +1,6 @@
 import { HashRouter, Route, Routes } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { I18nProvider } from "@/lib/i18n";
 import { Layout } from "@/components/Layout";
 import { InboxPage } from "@/pages/InboxPage";
 import { ComparePage } from "@/pages/ComparePage";
@@ -11,6 +12,7 @@ import { AccessibilityPage, CookiesPage, PrivacyPage, TermsPage } from "@/pages/
 // HashRouter so the same build works on static hosting and inside the Android WebView.
 export default function App() {
   return (
+    <I18nProvider>
     <TooltipProvider delayDuration={150}>
       <HashRouter>
         <Routes>
@@ -29,5 +31,6 @@ export default function App() {
         </Routes>
       </HashRouter>
     </TooltipProvider>
+    </I18nProvider>
   );
 }

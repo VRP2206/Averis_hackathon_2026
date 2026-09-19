@@ -39,6 +39,7 @@ Personal data actually collected from real people: **only the reviewer's display
 - [x] Form consent on the only form that collects personal data (reviewer name)
 - [x] Collect only necessary data: reviewer name is optional and defaults to "reviewer"
 - [x] Analytics tracking: none included; `web/index.html` has no third-party scripts
+- [x] UI languages: English, Bahasa Melayu, Chinese via a built-in dictionary (no Google Translate widget, so no extra data leaves the page)
 - [x] Third-party embeds: none; fonts (Fredoka, Nunito, OFL) are self-hosted via Fontsource, so no request goes to a font CDN
 - [x] Accessibility: semantic landmarks, skip link, focus rings, labelled controls, `aria-live` on status changes, keyboard-operable table and forms, `prefers-reduced-motion` respected
 - [x] Alt text: all meaningful images/icons labelled; decorative icons `aria-hidden`

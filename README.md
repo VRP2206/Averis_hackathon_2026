@@ -14,7 +14,7 @@ Averis × Monash Hackathon 2026. An AI-assisted pipeline that triages a shipping
 
 Run `sdoc run` to reproduce. Tests: `pytest` (49 tests, ~2 s).
 
-Docs: [docs/TODO.md](docs/TODO.md) (what's left) · [PLAN.md](PLAN.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/HANDOFF.md](docs/HANDOFF.md) · [docs/COMPLIANCE.md](docs/COMPLIANCE.md) · [docs/pitch/](docs/pitch/) (deck + video script) · [docs/USER-GUIDE.md](docs/USER-GUIDE.md) · [docs/DEMO-ANDROID.md](docs/DEMO-ANDROID.md) (show the app from any laptop) · [web/README.md](web/README.md)
+Docs: [docs/TODO.md](docs/TODO.md) (what's left) · [docs/PLAN.md](docs/PLAN.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/HANDOFF.md](docs/HANDOFF.md) · [docs/COMPLIANCE.md](docs/COMPLIANCE.md) · [docs/pitch/](docs/pitch/) (deck + video script) · [docs/USER-GUIDE.md](docs/USER-GUIDE.md) · [docs/DEMO-ANDROID.md](docs/DEMO-ANDROID.md) (show the app from any laptop) · [web/README.md](web/README.md)
 
 ## Quick start
 
@@ -52,7 +52,7 @@ sdoc serve                      # API
 cd web && npm install && npm run dev      # dashboard at http://localhost:5173
 ```
 
-**Email in:** the hackathon dataset, a real mailbox over IMAP (Gmail with an App Password, Outlook, any provider) or an uploaded `.eml`; all three go through the same pipeline. Inbox, Compare (SI vs BL with evidence, approve/override, drafted reply, translate), Invoices and Impact screens, plus Privacy / Terms / Cookies / Accessibility pages. The same build wraps into an Android APK with Capacitor: see [web/README.md](web/README.md).
+**Email in:** the hackathon dataset, a real mailbox over IMAP (Gmail with an App Password, Outlook, any provider) or an uploaded `.eml`; all three go through the same pipeline. Inbox, Compare (SI vs BL with evidence, approve/override, drafted reply, translate), Invoices, Impact and Help screens; UI in English, Bahasa Melayu and Chinese (globe switcher in the header, no third-party translate widget), plus Privacy / Terms / Cookies / Accessibility pages. The same build wraps into an Android APK with Capacitor: see [web/README.md](web/README.md).
 
 ## Repo layout
 
@@ -82,7 +82,7 @@ Set in `.env`: `SDOC_LLM_PROVIDER=gemini` + `GEMINI_API_KEY` (free tier), `anthr
 
 ## Team
 
-Frontend: reviewer dashboard (see `docs/HANDOFF.md`). Backend: cloud deployment of `sdoc.api` (AWS Lambda + DynamoDB per `PLAN.md`). Core pipeline: this package.
+Frontend: reviewer dashboard (see `docs/HANDOFF.md`). Backend: cloud deployment of `sdoc.api` (AWS Lambda + DynamoDB per `docs/PLAN.md`). Core pipeline: this package.
 
 ## Screenshots
 

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api, type EmailResult, type Metrics } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Stats } from "@/components/Stats";
+import { useT } from "@/lib/i18n";
 
 const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
 
@@ -9,6 +10,7 @@ export function ImpactPage() {
   const [m, setM] = useState<Metrics | null>(null);
   const [results, setResults] = useState<EmailResult[]>([]);
   const [noTruth, setNoTruth] = useState(false);
+  const { t } = useT();
 
   useEffect(() => {
     api.metrics().then(setM).catch(() => setNoTruth(true));
@@ -31,7 +33,7 @@ export function ImpactPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="hover-sheen inline-block">Impact</h1>
+        <h1 className="hover-sheen inline-block">{t("impact.title")}</h1>
         <p className="text-sm text-muted-foreground">Computed live from the API. Accuracy figures are measured on the hackathon dataset provided by the organisers (synthetic), not on production mail.</p>
       </div>
 

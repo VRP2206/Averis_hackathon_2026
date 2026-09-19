@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useT } from "@/lib/i18n";
 
 const PRESETS: Record<string, string> = { Gmail: "imap.gmail.com", "Outlook / Microsoft 365": "outlook.office365.com", Yahoo: "imap.mail.yahoo.com" };
 
@@ -16,6 +17,7 @@ export function MailSources({ onChange }: { onChange: () => void }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+  const { t } = useT();
 
   const load = () => api.mailbox().then(setStatus).catch(() => undefined);
   useEffect(() => { load(); }, []);
@@ -40,21 +42,21 @@ export function MailSources({ onChange }: { onChange: () => void }) {
   return (
     <section aria-labelledby="sources" className="lift rounded-2xl border-l-8 border-l-g-blue bg-card p-5">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 id="sources" className="flex items-center gap-2 text-base font-semibold"><Mail className="size-5 text-primary" aria-hidden="true" />Email sources</h2>
+        <h2 id="sources" className="flex items-center gap-2 text-base font-semibold"><Mail className="size-5 text-primary" aria-hidden="true" />{t("sources.title")}</h2>
         <p className="text-sm text-muted-foreground">
-          {status.connected ? <>Connected to <strong>{status.user}</strong> ({status.host}, {status.folder}).</> : "Hackathon dataset loaded. Connect a real mailbox or upload an email."}
+          {status.connected ? t("sources.connected", { user: status.user ?? "", host: status.host ?? "", folder: status.folder ?? "" }) : t("sources.default")}
         </p>
         <div className="ml-auto flex flex-wrap gap-2">
           {status.connected ? (
             <>
-              <Button variant="outline" size="sm" onClick={refresh} disabled={busy !== null}><RefreshCw className={busy === "refresh" ? "size-4 animate-spin" : "size-4"} aria-hidden="true" />Fetch new mail</Button>
-              <Button variant="ghost" size="sm" onClick={disconnect} disabled={busy !== null}><Unplug className="size-4" aria-hidden="true" />Disconnect</Button>
+              <Button variant="outline" size="sm" onClick={refresh} disabled={busy !== null}><RefreshCw className={busy === "refresh" ? "size-4 animate-spin" : "size-4"} aria-hidden="true" />{t("sources.fetch")}</Button>
+              <Button variant="ghost" size="sm" onClick={disconnect} disabled={busy !== null}><Unplug className="size-4" aria-hidden="true" />{t("sources.disconnect")}</Button>
             </>
           ) : (
-            <Button variant="outline" size="sm" onClick={() => setOpen(true)}><Plug className="size-4" aria-hidden="true" />Connect mailbox</Button>
+            <Button variant="outline" size="sm" onClick={() => setOpen(true)}><Plug className="size-4" aria-hidden="true" />{t("sources.connect")}</Button>
           )}
           <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} disabled={busy === "upload"}>
-            <Upload className="size-4" aria-hidden="true" />{busy === "upload" ? "Processing…" : "Upload .eml"}
+            <Upload className="size-4" aria-hidden="true" />{busy === "upload" ? t("inbox.processing") : t("sources.upload")}
           </Button>
           <input ref={fileRef} type="file" accept=".eml,message/rfc822" className="sr-only" onChange={onFile} aria-label="Upload an .eml email file" />
         </div>

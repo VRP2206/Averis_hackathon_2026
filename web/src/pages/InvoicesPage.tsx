@@ -6,11 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Stats } from "@/components/Stats";
+import { useT } from "@/lib/i18n";
 
 export function InvoicesPage() {
   const [rows, setRows] = useState<InvoiceRecord[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [q, setQ] = useState("");
+  const { t } = useT();
   const [topic, setTopic] = useState("ALL");
   const [sort, setSort] = useState<"newest" | "oldest" | "topic" | "sender">("newest");
 
@@ -37,7 +39,7 @@ export function InvoicesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="hover-sheen inline-block">Invoices and receipts</h1>
+        <h1 className="hover-sheen inline-block">{t("invoices.title")}</h1>
         <p className="text-lg text-muted-foreground">Billing emails with the invoice numbers, order references and amounts found in them. Values are read from the email text; hover a number to see the line it came from.</p>
       </div>
 

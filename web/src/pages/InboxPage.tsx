@@ -9,21 +9,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { CategoryChip, StatusBadge } from "@/components/StatusBadge";
 import { Stats } from "@/components/Stats";
 import { MailSources } from "@/components/MailSources";
+import { useT, type Key } from "@/lib/i18n";
 
-const CATEGORY_OPTIONS: Array<[Category | "ALL", string]> = [
-  ["ALL", "All categories"], ["BL_COMPARISON", "BL comparison"], ["SI_REQUEST", "SI request"],
-  ["INVOICE_QUERY", "Invoice query"], ["GENERAL", "General"], ["SPAM", "Spam"],
+const CATEGORY_OPTIONS: Array<[Category | "ALL", Key]> = [
+  ["ALL", "filter.all.categories"], ["BL_COMPARISON", "cat.BL_COMPARISON"], ["SI_REQUEST", "cat.SI_REQUEST"],
+  ["INVOICE_QUERY", "cat.INVOICE_QUERY"], ["GENERAL", "cat.GENERAL"], ["SPAM", "cat.SPAM"],
 ];
-const STATUS_OPTIONS: Array<[Status | "ALL", string]> = [
-  ["ALL", "All statuses"], ["MISMATCH", "Mismatch"], ["NEEDS_REVIEW", "Needs review"], ["OK", "OK"],
+const STATUS_OPTIONS: Array<[Status | "ALL", Key]> = [
+  ["ALL", "filter.all.statuses"], ["MISMATCH", "status.MISMATCH"], ["NEEDS_REVIEW", "status.NEEDS_REVIEW"], ["OK", "status.OK"],
 ];
-const SOURCE_OPTIONS: Array<[EmailSummary["source"] | "ALL", string]> = [
-  ["ALL", "All sources"], ["dataset", "Hackathon dataset"], ["mailbox", "Connected mailbox"], ["upload", "Uploaded .eml"],
+const SOURCE_OPTIONS: Array<[EmailSummary["source"] | "ALL", Key]> = [
+  ["ALL", "filter.all.sources"], ["dataset", "source.dataset"], ["mailbox", "source.mailbox"], ["upload", "source.upload"],
 ];
 type SortKey = "newest" | "oldest" | "severity" | "category" | "sender" | "subject";
-const SORT_OPTIONS: Array<[SortKey, string]> = [
-  ["newest", "Newest first"], ["oldest", "Oldest first"], ["severity", "Most urgent first"],
-  ["category", "Category"], ["sender", "Sender A to Z"], ["subject", "Subject A to Z"],
+const SORT_OPTIONS: Array<[SortKey, Key]> = [
+  ["newest", "sort.newest"], ["oldest", "sort.oldest"], ["severity", "sort.severity"],
+  ["category", "sort.category"], ["sender", "sort.sender"], ["subject", "sort.subject"],
 ];
 const SEVERITY: Record<string, number> = { MISMATCH: 0, NEEDS_REVIEW: 1, OK: 2 };
 
@@ -38,6 +39,7 @@ export function InboxPage() {
   const [sort, setSort] = useState<SortKey>("newest");
   const [announce, setAnnounce] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
+  const { t } = useT();
 
   const load = () => api.emails().then(setRows).catch((e) => setError(String(e.message)));
   useEffect(() => { load(); }, []);
@@ -78,7 +80,7 @@ export function InboxPage() {
   function showStatus(s: Status | "ALL") {
     setStatus(s); setCat(s === "ALL" ? "ALL" : "BL_COMPARISON"); setSource("ALL"); setQ("");
     setSort(s === "ALL" ? "newest" : "severity");
-    setAnnounce(s === "ALL" ? "Showing all emails." : `Showing ${STATUS_OPTIONS.find(([k]) => k === s)?.[1]} emails.`);
+    setAnnounce(s === "ALL" ? t("tile.showing") : `${t("tile.showing")}: ${t(STATUS_OPTIONS.find(([k]) => k === s)![1])}`);
     requestAnimationFrame(() => listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
   function clearFilters() { setQ(""); setCat("ALL"); setStatus("ALL"); setSource("ALL"); setSort("newest"); setAnnounce("Filters cleared."); }
@@ -97,12 +99,12 @@ export function InboxPage() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="hover-sheen inline-block">Inbox</h1>
-          <p className="text-lg text-muted-foreground">Every email triaged; document checks flagged for review.</p>
+          <h1 className="hover-sheen inline-block">{t("inbox.title")}</h1>
+          <p className="text-lg text-muted-foreground">{t("inbox.subtitle")}</p>
         </div>
         <Button size="lg" onClick={processInbox} disabled={busy}>
           <RefreshCw className={busy ? "size-5 animate-spin" : "size-5"} aria-hidden="true" />
-          {busy ? "Processing…" : "Process inbox"}
+          {busy ? t("inbox.processing") : t("inbox.process")}
         </Button>
       </div>
       <p className="sr-only" aria-live="polite">{announce}</p>
@@ -110,59 +112,59 @@ export function InboxPage() {
       <MailSources onChange={load} />
 
       <Stats items={[
-        { label: "Emails", value: counts.total, tone: "blue", icon: Mail, onClick: () => showStatus("ALL"), active: !filtersActive },
-        { label: "Mismatches to amend", value: counts.mismatch, tone: "red", icon: XCircle, onClick: () => showStatus("MISMATCH"), active: status === "MISMATCH" },
-        { label: "Need human review", value: counts.review, tone: "yellow", icon: AlertTriangle, onClick: () => showStatus("NEEDS_REVIEW"), active: status === "NEEDS_REVIEW" },
-        { label: "Checked clean", value: counts.ok, tone: "green", icon: CheckCircle2, onClick: () => showStatus("OK"), active: status === "OK" },
+        { label: t("tile.emails"), value: counts.total, tone: "blue", icon: Mail, onClick: () => showStatus("ALL"), active: !filtersActive },
+        { label: t("tile.mismatch"), value: counts.mismatch, tone: "red", icon: XCircle, onClick: () => showStatus("MISMATCH"), active: status === "MISMATCH" },
+        { label: t("tile.review"), value: counts.review, tone: "yellow", icon: AlertTriangle, onClick: () => showStatus("NEEDS_REVIEW"), active: status === "NEEDS_REVIEW" },
+        { label: t("tile.clean"), value: counts.ok, tone: "green", icon: CheckCircle2, onClick: () => showStatus("OK"), active: status === "OK" },
       ]} />
 
       <div ref={listRef} className="scroll-mt-28 space-y-4">
         <form className="lift-soft grid gap-4 rounded-2xl border bg-card p-5 md:grid-cols-2 xl:grid-cols-[2fr_1fr_1fr_1fr_1fr_auto]" onSubmit={(e) => e.preventDefault()} aria-label="Filter and sort the inbox">
           <div className="md:col-span-2 xl:col-span-1">
-            <Label htmlFor="search">Search</Label>
-            <Input id="search" className="field h-11" placeholder="Subject, sender or id" value={q} onChange={(e) => setQ(e.target.value)} />
+            <Label htmlFor="search">{t("filter.search")}</Label>
+            <Input id="search" className="field h-11" placeholder={t("filter.search.ph")} value={q} onChange={(e) => setQ(e.target.value)} />
           </div>
           <div>
-            <Label htmlFor="cat">Category</Label>
+            <Label htmlFor="cat">{t("filter.category")}</Label>
             <select id="cat" className="w-full" value={cat} onChange={(e) => setCat(e.target.value as Category | "ALL")}>
-              {CATEGORY_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              {CATEGORY_OPTIONS.map(([v, l]) => <option key={v} value={v}>{t(l)}</option>)}
             </select>
           </div>
           <div>
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">{t("filter.status")}</Label>
             <select id="status" className="w-full" value={status} onChange={(e) => setStatus(e.target.value as Status | "ALL")}>
-              {STATUS_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              {STATUS_OPTIONS.map(([v, l]) => <option key={v} value={v}>{t(l)}</option>)}
             </select>
           </div>
           <div>
-            <Label htmlFor="source">Source</Label>
+            <Label htmlFor="source">{t("filter.source")}</Label>
             <select id="source" className="w-full" value={source} onChange={(e) => setSource(e.target.value as EmailSummary["source"] | "ALL")}>
-              {SOURCE_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              {SOURCE_OPTIONS.map(([v, l]) => <option key={v} value={v}>{t(l)}</option>)}
             </select>
           </div>
           <div>
-            <Label htmlFor="sort">Sort by</Label>
+            <Label htmlFor="sort">{t("filter.sort")}</Label>
             <select id="sort" className="w-full" value={sort} onChange={(e) => setSort(e.target.value as SortKey)}>
-              {SORT_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              {SORT_OPTIONS.map(([v, l]) => <option key={v} value={v}>{t(l)}</option>)}
             </select>
           </div>
           <div className="flex items-end">
             <Button type="button" variant="outline" className="h-11 w-full" onClick={clearFilters} disabled={!filtersActive && sort === "newest"}>
-              <Eraser className="size-4" aria-hidden="true" />Clear
+              <Eraser className="size-4" aria-hidden="true" />{t("filter.clear")}
             </Button>
           </div>
         </form>
 
         <p className="text-sm text-muted-foreground" aria-live="polite">
-          Showing <strong>{filtered.length}</strong> of {rows?.length ?? 0} emails
-          {status !== "ALL" && <> with status <strong>{STATUS_OPTIONS.find(([k]) => k === status)?.[1]}</strong></>}
-          {cat !== "ALL" && <> in <strong>{CATEGORY_OPTIONS.find(([k]) => k === cat)?.[1]}</strong></>}
-          {source !== "ALL" && <> from <strong>{SOURCE_OPTIONS.find(([k]) => k === source)?.[1]}</strong></>}.
+          {t("inbox.showing", { n: filtered.length, total: rows?.length ?? 0 })}
+          {status !== "ALL" && <> · <strong>{t(STATUS_OPTIONS.find(([k]) => k === status)![1])}</strong></>}
+          {cat !== "ALL" && <> · <strong>{t(CATEGORY_OPTIONS.find(([k]) => k === cat)![1])}</strong></>}
+          {source !== "ALL" && <> · <strong>{t(SOURCE_OPTIONS.find(([k]) => k === source)![1])}</strong></>}
         </p>
 
-        {error && <p role="alert" className="rounded-2xl border border-bad bg-bad-bg p-4 text-bad">Could not reach the API: {error}. Is <code>sdoc serve</code> running? Check the address under the gear icon.</p>}
+        {error && <p role="alert" className="rounded-2xl border border-bad bg-bad-bg p-4 text-bad">{t("inbox.apiError", { err: error })}</p>}
         {rows && !processed && !error && (
-          <p className="rounded-2xl border bg-card p-4">No results yet. Choose <strong>Process inbox</strong> to run the pipeline.</p>
+          <p className="rounded-2xl border bg-card p-4">{t("inbox.noResults")}</p>
         )}
 
         <div className="lift-soft overflow-x-auto rounded-2xl border bg-card">
@@ -170,11 +172,11 @@ export function InboxPage() {
             <caption className="sr-only">Inbox, {filtered.length} of {rows?.length ?? 0} emails shown</caption>
             <TableHeader>
               <TableRow>
-                <TableHead scope="col">Email</TableHead>
-                <TableHead scope="col" className="hidden md:table-cell">From</TableHead>
-                <TableHead scope="col" className="hidden md:table-cell">Category</TableHead>
-                <TableHead scope="col" className="hidden md:table-cell">Status</TableHead>
-                <TableHead scope="col" className="hidden md:table-cell">Fields</TableHead>
+                <TableHead scope="col">{t("col.email")}</TableHead>
+                <TableHead scope="col" className="hidden md:table-cell">{t("col.from")}</TableHead>
+                <TableHead scope="col" className="hidden md:table-cell">{t("col.category")}</TableHead>
+                <TableHead scope="col" className="hidden md:table-cell">{t("col.status")}</TableHead>
+                <TableHead scope="col" className="hidden md:table-cell">{t("col.fields")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -192,7 +194,7 @@ export function InboxPage() {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span>{r.email_id}</span>
                       {r.source !== "dataset" && <span className="rounded-full bg-info-bg px-2 py-0.5 text-xs font-bold text-info">{r.source}</span>}
-                      {r.attachments.length > 0 && <span className="inline-flex items-center gap-0.5"><Paperclip className="size-3.5" aria-hidden="true" />{r.attachments.length} <span className="sr-only">attachments</span></span>}
+                      {r.attachments.length > 0 && <span className="inline-flex items-center gap-0.5"><Paperclip className="size-3.5" aria-hidden="true" />{r.attachments.length} <span className="sr-only">{t("col.attachments")}</span></span>}
                     </div>
                   </TableCell>
                   <TableCell className="hidden text-muted-foreground md:table-cell">{r.from}</TableCell>
@@ -202,7 +204,7 @@ export function InboxPage() {
                 </TableRow>
               ))}
               {rows && filtered.length === 0 && (
-                <TableRow><TableCell colSpan={5} className="py-12 text-center text-muted-foreground">No emails match these filters. <button type="button" className="underline" onClick={clearFilters}>Clear filters</button></TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} className="py-12 text-center text-muted-foreground">{t("inbox.none")} <button type="button" className="underline" onClick={clearFilters}>{t("inbox.clearFilters")}</button></TableCell></TableRow>
               )}
             </TableBody>
           </Table>
