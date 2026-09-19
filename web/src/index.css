@@ -100,6 +100,10 @@
   }
 }
 
+/* Native shell: keep the sticky header below the system status bar. */
+.native header.sticky { padding-top: max(env(safe-area-inset-top, 0px), 32px); }
+.native body { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
 .skip-link {
   @apply sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground;
 }
