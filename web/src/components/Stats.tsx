@@ -27,8 +27,10 @@ export function Stats({ items }: { items: StatItem[] }) {
           it.active && "ring-4 ring-white/80 ring-offset-2 ring-offset-background");
         const body = (
           <>
-            <dt className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide opacity-90">
-              {Icon && <Icon className="size-5" aria-hidden="true" />}{it.label}
+            {/* shrink-0 keeps the icon visible when a long label wraps (e.g. in Malay). */}
+            <dt className="flex items-start gap-2 text-sm font-bold uppercase tracking-wide opacity-90">
+              {Icon && <Icon className="mt-0.5 size-5 shrink-0" aria-hidden="true" />}
+              <span className="min-w-0 break-words hyphens-auto">{it.label}</span>
             </dt>
             <dd className="mt-2 font-display text-5xl font-semibold leading-none tabular-nums">{it.value}</dd>
             <dd className="mt-1 text-sm opacity-90">{it.hint ?? (it.onClick ? (it.active ? t("tile.showing") : t("tile.click")) : "")}</dd>
