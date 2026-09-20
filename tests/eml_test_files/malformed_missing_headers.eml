@@ -1,0 +1,3 @@
+This email lacks standard RFC 822/5322 MIME headers.
+Directly starting with plain text without From, To, or Subject fields.
+Testing how the backend parser handles malformed input.

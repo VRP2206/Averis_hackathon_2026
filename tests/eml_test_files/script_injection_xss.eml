@@ -1,0 +1,12 @@
+From: <script>alert('XSS')</script>@test.com
+To: user@sdoc.com
+Subject: <img src=x onerror=alert('Subject_XSS')>
+Date: Sun, 20 Sep 2026 12:00:00 +0000
+Content-Type: text/html; charset="utf-8"
+
+<html>
+  <body>
+    <h1>Testing Script Injection</h1>
+    <script>console.log("Testing XSS payload in EML parser");</script>
+  </body>
+</html>

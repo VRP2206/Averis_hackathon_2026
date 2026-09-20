@@ -1,0 +1,11 @@
+From: vendor@supplies.org
+To: user@sdoc.com
+Subject: Invoice & Shipping Mismatch Test
+Date: Sun, 20 Sep 2026 11:30:00 +0000
+Content-Type: text/plain; charset="utf-8"
+
+Order ID: 88412
+Declared Items: 50
+Invoiced Items: 45
+Total Amount: $1,200.00
+Note: Intentional discrepancy created for QA mismatch testing.
