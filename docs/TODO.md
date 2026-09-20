@@ -17,12 +17,12 @@ Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00. Team: **Cla
 
 | # | Task | Owner | How / notes |
 |---|---|---|---|
-| 1 | Create the team AWS account; do the 5 credit tasks; set a $10 budget alert | backend | Blocks the public demo link. `PLAN.md` -> Budget rules |
-| 2 | Deploy the API (Lambda + Mangum + Function URL); data bundled or in S3 | backend | `docs/HANDOFF.md` -> Backend. Set `SDOC_LLM_PROVIDER=gemini` + `GEMINI_API_KEY` as Lambda env vars |
-| 3 | `DynamoDBStore(ResultStore)` and switch `api.py` to it (3 methods) | backend | `JsonFileStore` works meanwhile; Lambda's disk is ephemeral, so this matters for the live link |
-| 4 | Build the website with `VITE_API_URL=<Lambda URL>` and deploy `web/dist` (Amplify Hosting, Netlify or Vercel free) | frontend | `cd web && npm run build` |
+| [x] | Create the team AWS account; do the 5 credit tasks; set a $10 budget alert | backend | Blocks the public demo link. `PLAN.md` -> Budget rules |
+| [x] | Deploy the API (Lambda + Mangum + Function URL); data bundled or in S3 | backend | `docs/HANDOFF.md` -> Backend. Set `SDOC_LLM_PROVIDER=gemini` + `GEMINI_API_KEY` as Lambda env vars |
+| [x] | `DynamoDBStore(ResultStore)` and switch `api.py` to it (3 methods) | backend | `JsonFileStore` works meanwhile; Lambda's disk is ephemeral, so this matters for the live link |
+| [x] | Build the website with `VITE_API_URL=<Lambda URL>` and deploy `web/dist` (Amplify Hosting, Netlify or Vercel free) | frontend | `cd web && npm run build` |
 | 5 | Fill member names and contact email in `web/src/content/business.ts`; deck title slide; Thank-you slide demo URL | frontend / pitch | Search `[Member` and `[URL]` |
-| 6 | Rebuild the APK once the public API exists, or set the URL in the app's gear menu during the demo; upload APK to Drive, link in slides | frontend | `docs/DEMO-ANDROID.md` -> Rebuilding |
+| [x] | Rebuild the APK once the public API exists, or set the URL in the app's gear menu during the demo; upload APK to Drive, link in slides | frontend | `docs/DEMO-ANDROID.md` -> Rebuilding |
 | 7 | Upload `docs/pitch/deck.pdf` to Drive (Anyone with link -> Viewer); or import into Google Slides | pitch | Regenerate: `npx @marp-team/marp-cli docs/pitch/deck.md --pdf` |
 | 8 | Record the video (<= 5:00) following `docs/pitch/video-script.md`; include the hover sheen, a KPI-tile click, one sample run, one mailbox fetch if a test Gmail is ready; upload Unlisted | pitch | Rehearse twice with a timer |
 | 9 | Make the GitHub repo public; verify the README setup on a clean clone | all | Last step before the form |
