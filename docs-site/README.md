@@ -28,16 +28,21 @@ Needs Node 20 or newer.
 
 ## Deploy
 
-The build output is plain static files, so any static host works. The recommended setup for `docs.shipdoc.org` is **Cloudflare Pages**, because the domain's DNS is already on Cloudflare and it does not touch the main site's Amplify domain settings:
+The build output is plain static files, so any static host works. The recommended setup for `docs.shipdoc.org` is **Cloudflare**, because the domain's DNS is already there and it does not touch the main site's Amplify domain settings.
+
+Cloudflare now builds Git repositories with **Workers Builds**, which reads the output folder from `wrangler.jsonc` in this folder rather than from a form field. Do not rely on the automatic VitePress preset: it assumes the default layout (`docs/.vitepress/dist`), which is not ours.
 
 | Setting | Value |
 |---|---|
-| Repository | this repository, branch `main` |
+| Repository / branch | this repository, `main` |
 | Root directory | `docs-site` |
 | Build command | `npm ci && npm run build` |
-| Build output directory | `.vitepress/dist` |
-| Environment variable | `NODE_VERSION` = `22` |
-| Custom domain | `docs.shipdoc.org` |
+| Deploy command | `npx wrangler deploy` (the default) |
+| Output folder | set in `wrangler.jsonc` (`.vitepress/dist`) |
+| Environment variable | `NODE_VERSION` = `22` (or keep a `.node-version` file containing `22`) |
+| Custom domain | Worker → Settings → Domains & Routes → Add → Custom domain → `docs.shipdoc.org` |
+
+The `name` in `wrangler.jsonc` must match the Worker's name in the Cloudflare dashboard.
 
 ### On AWS Amplify instead
 
