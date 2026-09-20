@@ -13,14 +13,14 @@ This document records what was done to put SDOC on AWS, what exists now, how to 
 
 | Item | Status |
 |---|---|
-| Website live on AWS Amplify | Done. `https://main.d3pt38qur6i911.amplifyapp.com` |
-| API live on AWS Lambda (public Function URL) | Done. URL: `https://j2mwf375qvy2xpf3xdqs4wai6y0rvrqd.lambda-url.ap-southeast-1.on.aws/` |
+| Website live on AWS Amplify | Done. https://main.d3pt38qur6i911.amplifyapp.com |
+| API live on AWS Lambda (public Function URL) | Done. URL: https://j2mwf375qvy2xpf3xdqs4wai6y0rvrqd.lambda-url.ap-southeast-1.on.aws/ |
 | API `/health` responds [IMPORTANT] | Done: `{"ok":true,"llm_provider":"none","results":0}` before processing |
 | `POST /process` runs all 520 emails in the cloud | Done: returned `processed: 520` |
 | Site shows the inbox with real statuses | Done: 520 emails, 45 mismatches, 21 need review, 154 clean |
 | Results stored in DynamoDB | To verify: `/health` should say `results: 520`, and the table `sdoc-results` should have 520 rows |
 | Cloud output identical to local `sdoc run` | **Open.** README says 46 mismatches / 20 escalated, the live site shows 45 / 21. See section 6 |
-| AI switched on in the cloud (Gemini) | Not done yet |
+| AI switched on in the cloud (Gemini) | Cloud deployment default to gemini |
 | AI on Bedrock (Claude) | Not done yet (optional) |
 | AWS code changes merged into `main` | To verify: changes were made on branch `aws-deploy` |
 | Repo public, video, deck URLs, member names | Not done, see section 9 |
@@ -71,8 +71,6 @@ Not created on purpose: EC2, RDS, NAT Gateway, OpenSearch (the usual surprise-bi
 ---
 
 ## 4. What we changed in the code
-
-All changes were applied from `aws-deploy-changes.zip` (also available as `aws-deploy.patch`). Review with `git diff main..aws-deploy`.
 
 | File | Change | Why |
 |---|---|---|
@@ -174,16 +172,16 @@ Amplify env var: `VITE_API_URL` = the Lambda Function URL, with `https://` and *
 
 ## 9. What is left (in priority order)
 
-1. [ ] **Resolve the 45/21 vs 46/20 difference** (section 6).
-2. [ ] **Confirm DynamoDB is really in use.** `/health` shows `results: 520`; the console table shows 520 items.
-3. [ ] **Turn the AI on (Gemini).** Add `SDOC_LLM_PROVIDER=gemini` and `GEMINI_API_KEY` to the Lambda, then test:
+1. [-] **Resolve the 45/21 vs 46/20 difference** (section 6).
+2. [x] **Confirm DynamoDB is really in use.** `/health` shows `results: 520`; the console table shows 520 items.
+3. [x] **Turn the AI on (Gemini).** Add `SDOC_LLM_PROVIDER=gemini` and `GEMINI_API_KEY` to the Lambda, then test:
    ```powershell
    Invoke-RestMethod -Method Post "$API/translate/email_001" -ContentType "application/json" -Body '{"target":"ms"}'
    ```
    Expect a translation and `llm_provider: gemini`. The rules require AI as a key component and the README currently says "no AI calls", so this needs visible evidence (translate demo, plus the LLM-path delta on the ~30 least-confident emails for a slide).
 4. [ ] **Bedrock (optional).** In us-east-1: Bedrock, Model catalog, Claude Haiku 4.5, submit Anthropic's use-case form, send one Playground prompt. New free-tier accounts can be blocked at that form; do not depend on it.
-5. [ ] **Merge `aws-deploy` into `main`** so judges see the Lambda code in the repo (Amplify will rebuild, which is harmless).
-6. [ ] **Check git history before making the repo public** (both commands should print nothing):
+5. [x] **Merge `aws-deploy` into `main`** so judges see the Lambda code in the repo (Amplify will rebuild, which is harmless).
+6. [x] **Check git history before making the repo public** (both commands should print nothing):
    ```powershell
    git log --all --oneline -- "*ground_truth.json"
    git log --all --oneline -S"AIza"

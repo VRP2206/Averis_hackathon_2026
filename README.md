@@ -6,6 +6,10 @@ SDOC reads a shipping-documentation inbox, sorts every email, checks each draft 
 
 ![Inbox](docs/screenshots/inbox.png)
 
+## Try it out 
+
+https://main.d3pt38qur6i911.amplifyapp.com/
+
 ## Results on the 520-email dataset
 
 Rules and heuristics only, no AI calls. Reproduce with `sdoc run`.
