@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     data_dir: Path = REPO_ROOT / "Provided Information" / "Participant Info"
     ground_truth: Path = REPO_ROOT / "Provided Information" / "Other" / "data_v2" / "ground_truth.json"
     output_dir: Path = REPO_ROOT / "output"
+    # AWS: set SDOC_DYNAMODB_TABLE to keep results in DynamoDB instead of output/results.json.
+    dynamodb_table: str = ""
 
     # LLM. "none" = rules + heuristics only (free, offline).
     llm_provider: Literal["none", "anthropic", "bedrock", "gemini"] = "none"

@@ -11,3 +11,4 @@ scripts
 .env
 Provided Information/Other
 web
+**/ground_truth.json

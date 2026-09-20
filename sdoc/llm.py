@@ -17,6 +17,8 @@ from .config import Settings
 
 log = logging.getLogger(__name__)
 
+_JSON_ONLY = "\n\nReply with a single JSON object and nothing else: no prose, no code fences."
+
 
 class LLMUnavailable(RuntimeError):
     pass
@@ -55,11 +57,18 @@ class AnthropicClient(LLMClient):
         self.fast_model, self.strong_model = fast_model, strong_model
 
     def complete_json(self, system, user, *, strong=False, max_tokens=1024):
+        if strong:
+            # Claude 4.6+ (Sonnet 5 included) answers 400 to an assistant prefill, so ask for JSON in the prompt.
+            msg = self._client.messages.create(
+                model=self.strong_model, max_tokens=max_tokens, system=system + _JSON_ONLY,
+                messages=[{"role": "user", "content": user}],
+            )
+            return self._parse_json(next(b.text for b in msg.content if b.type == "text"))
         msg = self._client.messages.create(
-            model=self.strong_model if strong else self.fast_model,
+            model=self.fast_model,
             max_tokens=max_tokens, system=system,
             messages=[{"role": "user", "content": user},
-                      {"role": "assistant", "content": "{"}],   # prefill: JSON only
+                      {"role": "assistant", "content": "{"}],   # prefill: JSON only (Haiku 4.5 still allows it)
         )
         return self._parse_json("{" + msg.content[0].text)
 
@@ -71,8 +80,18 @@ class BedrockClient(LLMClient):
         self.fast_model, self.strong_model = fast_model, strong_model
 
     def complete_json(self, system, user, *, strong=False, max_tokens=1024):
+        if strong:
+            # Sonnet 5 rejects assistant prefill and non-default temperature (400), so neither is sent.
+            resp = self._client.converse(
+                modelId=self.strong_model,
+                system=[{"text": system + _JSON_ONLY}],
+                messages=[{"role": "user", "content": [{"text": user}]}],
+                inferenceConfig={"maxTokens": max_tokens},
+            )
+            blocks = resp["output"]["message"]["content"]
+            return self._parse_json(next(b["text"] for b in blocks if "text" in b))
         resp = self._client.converse(
-            modelId=self.strong_model if strong else self.fast_model,
+            modelId=self.fast_model,
             system=[{"text": system}],
             messages=[{"role": "user", "content": [{"text": user}]},
                       {"role": "assistant", "content": [{"text": "{"}]}],

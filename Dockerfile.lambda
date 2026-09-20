@@ -1,0 +1,20 @@
+# SDOC API as an AWS Lambda container image (served through a Function URL).
+#   docker buildx build --platform linux/amd64 --provenance=false --sbom=false -f Dockerfile.lambda -t sdoc-api:lambda --load .
+# `--provenance=false` matters: Docker's default attestation manifest is rejected by Lambda.
+FROM public.ecr.aws/lambda/python:3.12
+
+# Dependencies first so this layer is cached between code changes.
+COPY pyproject.toml README.md ./
+COPY sdoc ./sdoc
+RUN pip install --no-cache-dir ".[aws]" && rm -rf /root/.cache
+
+# The participant dataset ships inside the image. The organisers' answer key is NOT copied
+# (see .dockerignore), so /metrics returns 404 in the cloud and the Impact page hides its accuracy panel.
+COPY ["Provided Information/Participant Info", "${LAMBDA_TASK_ROOT}/data"]
+
+# Lambda's filesystem is read-only except /tmp, so every writable path points there.
+ENV SDOC_DATA_DIR=${LAMBDA_TASK_ROOT}/data \
+    SDOC_OUTPUT_DIR=/tmp/output \
+    SDOC_LLM_CACHE_DIR=/tmp/llm-cache
+
+CMD ["sdoc.lambda_handler.handler"]

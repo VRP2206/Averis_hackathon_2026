@@ -24,13 +24,13 @@ from .config import settings
 from .evaluate import Evaluator
 from .models import EmailResult, Status
 from .pipeline import Pipeline, build_pipeline
-from .store import JsonFileStore, ResultStore
+from .store import ResultStore, make_store
 
 app = FastAPI(title="SDOC", version="0.1.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 _pipeline: Optional[Pipeline] = None
-_store: ResultStore = JsonFileStore(settings.output_dir / "results.json")
+_store: ResultStore = make_store(settings.dynamodb_table, settings.output_dir / "results.json")
 
 
 def pipeline() -> Pipeline:
@@ -53,14 +53,15 @@ def _inbox():
 
 @app.get("/health")
 def health():
-    return {"ok": True, "llm_provider": settings.llm_provider, "results": len(_store.all())}
+    return {"ok": True, "llm_provider": settings.llm_provider, "results": _store.count()}
 
 
 @app.get("/emails")
 def emails():
     ib = _inbox()
+    done = {r.email_id: r for r in _store.all()}      # one scan, not one lookup per email
     return [{"email_id": e.email_id, "from": e.sender, "subject": e.subject, "source": ib.source_of(e.email_id),
-             "attachments": e.attachments, "result": (_store.get(e.email_id) or EmailResult(
+             "attachments": e.attachments, "result": (done.get(e.email_id) or EmailResult(
                  email_id=e.email_id, category="GENERAL")).model_dump(mode="json", include={"category", "status", "review_reason", "defect_fields"})}
             for e in ib.emails()]
 
