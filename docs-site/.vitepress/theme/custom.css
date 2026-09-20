@@ -1,0 +1,24 @@
+/* shipdoc brand colours, taken from the app (logo indigo #5B4BD6, Google-style status colours) */
+:root {
+  --vp-c-brand-1: #5b4bd6;
+  --vp-c-brand-2: #6d5fe0;
+  --vp-c-brand-3: #4a3bbf;
+  --vp-c-brand-soft: rgba(91, 75, 214, 0.14);
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #4285f4 0%, #5b4bd6 45%, #34a853 100%);
+}
+.dark {
+  --vp-c-brand-1: #8b7ff0;
+  --vp-c-brand-2: #7a6de8;
+  --vp-c-brand-3: #6a5ce0;
+}
+/* status words used in the docs */
+.status-ok { color: #1e8e3e; font-weight: 600; }
+.status-mismatch { color: #d93025; font-weight: 600; }
+.status-review { color: #b06000; font-weight: 600; }
+.dark .status-ok { color: #81c995; }
+.dark .status-mismatch { color: #f28b82; }
+.dark .status-review { color: #fdd663; }
+/* screenshots */
+.vp-doc img { border-radius: 8px; border: 1px solid var(--vp-c-divider); }
+.vp-doc img.no-frame { border: 0; }
