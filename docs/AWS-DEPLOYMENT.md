@@ -189,7 +189,7 @@ Amplify env var: `VITE_API_URL` = the Lambda Function URL, with `https://` and *
    If either prints a commit, rewrite that history and rotate any exposed key first.
 7. [ ] Fill member names and contact email in `web/src/content/business.ts`; fix `[Member` and `[URL]` placeholders in the deck.
 8. [ ] APK: set the API URL in the app's gear menu, or rebuild with the public URL; upload to Drive.
-9. [ ] Upload `docs/pitch/deck.pdf` to Drive (Anyone with link, Viewer).
+9. [ ] Upload the slide deck (kept outside the repo) to Drive (Anyone with link, Viewer).
 10. [ ] Record the video (5:00 max). Hit `/health` about a minute before to warm the Lambda. Demo the deployed link, not localhost.
 11. [ ] Make the repo public and verify the README setup from a clean clone.
 12. [ ] Submit the Google Form: https://forms.gle/nnam5eXrf5cjXdf3

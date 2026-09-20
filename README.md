@@ -1,14 +1,17 @@
-# SDOC — Shipping Document Check
+# shipdoc — Shipping Document Check
 
 **Team Claude's Plan** · Averis × Monash Hackathon 2026
 
-SDOC reads a shipping-documentation inbox, sorts every email, checks each draft Bill of Lading (BL) against its Shipping Instruction (SI), and hands anything it cannot decide to a person with the reason. It runs as a website and an Android app on top of one Python pipeline.
+shipdoc reads a shipping-documentation inbox, sorts every email, checks each draft Bill of Lading (BL) against its Shipping Instruction (SI), and hands anything it cannot decide to a person with the reason. It runs as a website and an Android app on top of one Python pipeline.
 
 ![Inbox](docs/screenshots/inbox.png)
 
-## Try it out 
+## Try it out
 
-https://main.d3pt38qur6i911.amplifyapp.com/
+**Live dashboard:** https://shipdoc.org (while DNS propagates: https://main.d3pt38qur6i911.amplifyapp.com/)
+**API:** https://j2mwf375qvy2xpf3xdqs4wai6y0rvrqd.lambda-url.ap-southeast-1.on.aws/docs
+
+Deployed on AWS in ap-southeast-1: Lambda + Function URL, DynamoDB, Amplify Hosting.
 
 ## Results on the 520-email dataset
 
@@ -21,7 +24,7 @@ Rules and heuristics only, no AI calls. Reproduce with `sdoc run`.
 | Defective BLs caught with the exact wrong fields | 46 / 46 |
 | False alarms on clean pairs | 0 |
 | Cases escalated to a person with the right reason | 20 / 20 |
-| Automated tests | 54 passing (`pytest`, ~2 s) |
+| Automated tests | 59 passing (`pytest`) |
 
 The dataset is synthetic, provided by the organisers. The AI layer is what carries the system to messier real mail.
 
@@ -163,7 +166,7 @@ Each stage is one class behind an abstract base, wired together in `build_pipeli
 sdoc/        pipeline package (classify, readers, doctype, extract, compare, gate, pipeline, api, cli)
 web/         React dashboard; web/android is the Capacitor Android project
 tests/       pytest suite
-docs/        plan, architecture, handoff, user guide, compliance, pitch deck, test emails, screenshots
+docs/        plan, architecture, handoff, user guide, compliance, AWS deployment, test emails, screenshots
 scripts/     Android demo launcher, test-email generator
 apk/         prebuilt Android APK
 Provided Information/Participant Info/   the hackathon dataset
@@ -171,6 +174,8 @@ Provided Information/Participant Info/   the hackathon dataset
 
 ## Documents
 
-[What's left](docs/TODO.md) · [Plan](docs/PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Frontend/backend handoff](docs/HANDOFF.md) · [User guide](docs/USER-GUIDE.md) · [Android demo](docs/DEMO-ANDROID.md) · [Compliance](docs/COMPLIANCE.md) · [Pitch deck and video script](docs/pitch/) · [Test emails](docs/test-emails/)
+[What's left](docs/TODO.md) · [Plan](docs/PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Frontend/backend handoff](docs/HANDOFF.md) · [User guide](docs/USER-GUIDE.md) · [Android demo](docs/DEMO-ANDROID.md) · [Compliance](docs/COMPLIANCE.md) · [Test emails](docs/test-emails/)
+
+Team Claude's Plan: Rahul Vedant Pemsing, Chew Ee Huan, Lye Wei Ho, Khoo Lip Hong, Syed Ibrahim Hassan.
 
 Student prototype for the Averis × Monash Hackathon 2026. Not an Averis product.

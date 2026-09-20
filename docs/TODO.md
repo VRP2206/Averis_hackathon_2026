@@ -1,4 +1,4 @@
-# What's left (as of 20 Sep 2026, evening)
+# What's left (as of 21 Sep 2026)
 
 Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00. Team: **Claude's Plan**.
 
@@ -11,9 +11,13 @@ Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00. Team: **Cla
 - [x] Web dashboard: Inbox (clickable KPI tiles, filters, source, sort), Compare, Invoices, Impact, Help; Privacy / Terms / Cookies / Accessibility
 - [x] Redesign: Gmail-white, Google colours, big Fredoka type with sheen, hover lift, animated blobs, self-hosted fonts, hero/logo art
 - [x] Android: Capacitor project, runtime API-URL setting, prebuilt `apk/sdoc-debug.apk`, `scripts/demo-android.ps1`, `docs/DEMO-ANDROID.md`
-- [x] Docs: README, PLAN, ARCHITECTURE, HANDOFF, COMPLIANCE, USER-GUIDE, pitch deck (md + pdf), video script, coverage page
+- [x] Deployed: API on Lambda (ap-southeast-1) + DynamoDB, dashboard on Amplify, APK pointing at the live API
+- [x] Docs: README, PLAN, ARCHITECTURE, HANDOFF, COMPLIANCE, USER-GUIDE, AWS-DEPLOYMENT, coverage page (slide deck and video script are kept outside the repo)
 
 ## Must do before submitting
+
+**Blocking now:** `shipdoc.org` has no DNS record yet, so the link in the deck and the form will not load. Point it at the Amplify app (Amplify -> Hosting -> Custom domains) or use the Amplify URL everywhere.
+
 
 | # | Task | Owner | How / notes |
 |---|---|---|---|
@@ -21,10 +25,10 @@ Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00. Team: **Cla
 | [x] | Deploy the API (Lambda + Mangum + Function URL); data bundled or in S3 | backend | `docs/HANDOFF.md` -> Backend. Set `SDOC_LLM_PROVIDER=gemini` + `GEMINI_API_KEY` as Lambda env vars |
 | [x] | `DynamoDBStore(ResultStore)` and switch `api.py` to it (3 methods) | backend | `JsonFileStore` works meanwhile; Lambda's disk is ephemeral, so this matters for the live link |
 | [x] | Build the website with `VITE_API_URL=<Lambda URL>` and deploy `web/dist` (Amplify Hosting, Netlify or Vercel free) | frontend | `cd web && npm run build` |
-| 5 | Fill member names and contact email in `web/src/content/business.ts`; deck title slide; Thank-you slide demo URL | frontend / pitch | Search `[Member` and `[URL]` |
+| [x] | Member names and contact email filled in `web/src/content/business.ts` | frontend | Done 21 Sep |
 | [x] | Rebuild the APK once the public API exists, or set the URL in the app's gear menu during the demo; upload APK to Drive, link in slides | frontend | `docs/DEMO-ANDROID.md` -> Rebuilding |
-| 7 | Upload `docs/pitch/deck.pdf` to Drive (Anyone with link -> Viewer); or import into Google Slides | pitch | Regenerate: `npx @marp-team/marp-cli docs/pitch/deck.md --pdf` |
-| 8 | Record the video (<= 5:00) following `docs/pitch/video-script.md`; include the hover sheen, a KPI-tile click, one sample run, one mailbox fetch if a test Gmail is ready; upload Unlisted | pitch | Rehearse twice with a timer |
+| 7 | Upload the slide deck to Drive (Anyone with link -> Viewer) | pitch | Deck lives outside the repo now |
+| 8 | Record the video (<= 5:00) and upload Unlisted; every member must appear on camera (organisers confirmed) | pitch | Rehearse twice with a timer |
 | 9 | Make the GitHub repo public; verify the README setup on a clean clone | all | Last step before the form |
 | 10 | Submit the Google Form: description, repo, live link, slides, video | rep | https://forms.gle/nnam5eXrf5cjXdf3 |
 
@@ -32,8 +36,10 @@ Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00. Team: **Cla
 
 - [ ] Create a throwaway Gmail with an App Password for the live "Connect mailbox" moment; send it the two sample attachments beforehand
 - [ ] Run the LLM path on the ~30 emails rules are least confident about and report the delta on a slide (Gemini key is configured locally)
-- [ ] Restrict API CORS to the dashboard origin before going public
+- [ ] Restrict API CORS to the Amplify origin (currently `*`)
+- [ ] Clear the ~104 leftover `upload_*` rows from DynamoDB so the Impact page counts 520, not 624
 - [ ] Rotate the Gemini and 21st.dev keys after the event (both passed through chat)
+- [ ] Clear the leftover `upload_*` rows from DynamoDB so Impact counts 520, not 624
 - [ ] Ask the organisers for the scoring-server URL
 
 ## Finals (after 24 Sep, if shortlisted)
