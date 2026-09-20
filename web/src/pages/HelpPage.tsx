@@ -34,7 +34,7 @@ export function HelpPage() {
           <h1 className="hover-sheen inline-block">{t("help.title")}</h1>
           <p className="mt-3 text-xl text-muted-foreground">Three ways in, one pipeline out. Start with a sample, then connect a real mailbox.</p>
         </div>
-        <img src="/hero.svg" alt="Emails flow from a mailbox through SDOC and come out as checked Bills of Lading" className="lift w-full rounded-3xl" />
+        <img src="/hero.svg" alt="Emails flow from a mailbox through SHIPDOC and come out as checked Bills of Lading" className="lift w-full rounded-3xl" />
       </section>
 
       <section aria-labelledby="try">
@@ -69,7 +69,7 @@ export function HelpPage() {
           <CardContent>
             <ol className="list-decimal space-y-3 pl-6">
               <li>In your Google Account open <strong>Security → 2-Step Verification</strong> and turn it on (required for app passwords).</li>
-              <li>Still under Security, open <strong>App passwords</strong> (search "App passwords" in the account search bar). Name it <em>SDOC</em> and choose <strong>Create</strong>. Google shows a 16-character password once; copy it.</li>
+              <li>Still under Security, open <strong>App passwords</strong> (search "App passwords" in the account search bar). Name it <em>SHIPDOC</em> and choose <strong>Create</strong>. Google shows a 16-character password once; copy it.</li>
               <li>Back here, open <Link className="underline" to="/">Inbox</Link> and choose <strong>Connect mailbox</strong>. Provider <em>Gmail</em>, your address, and paste the app password.</li>
               <li>Leave folder <code>INBOX</code> and latest <code>50</code>, tick the authorisation box, then <strong>Connect and fetch</strong>. The newest 50 emails are triaged in a few seconds and tagged <em>mailbox</em>.</li>
               <li>New mail later? Choose <strong>Fetch new mail</strong>. Done for the day? <strong>Disconnect</strong> forgets the credentials.</li>
