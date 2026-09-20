@@ -48,6 +48,18 @@ class PdfReader(DocumentReader):
     extensions = ("pdf",)
 
     def _parse(self, data):
+        try:
+            return self._parse_pdf(data)
+        except Exception:
+            # Git on Windows can rewrite line endings inside .pdf files (LF -> CRLF).
+            # That shifts every byte offset and breaks the PDF cross-reference table.
+            # Undoing the conversion restores the original file exactly, so retry once.
+            fixed = data.replace(b"\r\n", b"\n")
+            if fixed == data:
+                raise
+            return self._parse_pdf(fixed)
+
+    def _parse_pdf(self, data):
         import pdfplumber
         parts, pairs = [], []
         with pdfplumber.open(io.BytesIO(data)) as pdf:
