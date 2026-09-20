@@ -1,59 +1,59 @@
-# What's left (as of 21 Sep 2026)
+# What's left
 
-Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00. Team: **Claude's Plan**.
+Team **Claude's Plan** · preliminary deadline **Tue 22 Sep, 12:00 PM** (aim to submit by 11:00).
 
-## Done
+## Submission checklist
 
-- [x] Core pipeline: classify, read txt/pdf/docx/xlsx, extract 7 fields, compare, escalate; **1.000** on the 520-email set; 51 tests
-- [x] LLM cascade for classification, extraction and translation (Gemini / Claude API / Bedrock), disk-cached
-- [x] Real mail in: IMAP connector (Gmail, Outlook, any) and `.eml` upload; three one-click sample emails
-- [x] API (`sdoc serve`): inbox, results with evidence, override with audit trail, invoices, translate, mailbox, upload, metrics
-- [x] Web dashboard: Inbox (clickable KPI tiles, filters, source, sort), Compare, Invoices, Impact, Help; Privacy / Terms / Cookies / Accessibility
-- [x] Redesign: Gmail-white, Google colours, big Fredoka type with sheen, hover lift, animated blobs, self-hosted fonts, hero/logo art
-- [x] Android: Capacitor project, runtime API-URL setting, prebuilt `apk/sdoc-debug.apk`, `scripts/demo-android.ps1`, `docs/DEMO-ANDROID.md`
-- [x] Deployed: API on Lambda (ap-southeast-1) + DynamoDB, dashboard on Amplify, APK pointing at the live API
-- [x] Docs: README, PLAN, ARCHITECTURE, HANDOFF, COMPLIANCE, USER-GUIDE, AWS-DEPLOYMENT, coverage page (slide deck and video script are kept outside the repo)
-
-## Must do before submitting
-
-**Blocking now:** `shipdoc.org` has no DNS record yet, so the link in the deck and the form will not load. Point it at the Amplify app (Amplify -> Hosting -> Custom domains) or use the Amplify URL everywhere.
-
-
-| # | Task | Owner | How / notes |
+| | Item | Link / where | Status |
 |---|---|---|---|
-| [x] | Create the team AWS account; do the 5 credit tasks; set a $10 budget alert | backend | Blocks the public demo link. `PLAN.md` -> Budget rules |
-| [x] | Deploy the API (Lambda + Mangum + Function URL); data bundled or in S3 | backend | `docs/HANDOFF.md` -> Backend. Set `SDOC_LLM_PROVIDER=gemini` + `GEMINI_API_KEY` as Lambda env vars |
-| [x] | `DynamoDBStore(ResultStore)` and switch `api.py` to it (3 methods) | backend | `JsonFileStore` works meanwhile; Lambda's disk is ephemeral, so this matters for the live link |
-| [x] | Build the website with `VITE_API_URL=<Lambda URL>` and deploy `web/dist` (Amplify Hosting, Netlify or Vercel free) | frontend | `cd web && npm run build` |
-| [x] | Member names and contact email filled in `web/src/content/business.ts` | frontend | Done 21 Sep |
-| [x] | Rebuild the APK once the public API exists, or set the URL in the app's gear menu during the demo; upload APK to Drive, link in slides | frontend | `docs/DEMO-ANDROID.md` -> Rebuilding |
-| 7 | Upload the slide deck to Drive (Anyone with link -> Viewer) | pitch | Deck lives outside the repo now |
-| 8 | Record the video (<= 5:00) and upload Unlisted; every member must appear on camera (organisers confirmed) | pitch | Rehearse twice with a timer |
-| 9 | Make the GitHub repo public; verify the README setup on a clean clone | all | Last step before the form |
-| 10 | Submit the Google Form: description, repo, live link, slides, video | rep | https://forms.gle/nnam5eXrf5cjXdf3 |
+| 1 | Project description (≤150 words) | in the Google Form | ready, paste it in |
+| 2 | GitHub repo, public, README with setup | github.com/VRP2206/Averis_hackathon_2026 | **make it public last** |
+| 3 | Live prototype link | https://shipdoc.org · https://www.shipdoc.org | live |
+| 4 | Demo video ≤ 5:00, unlisted | https://youtu.be/6k3d8YqbmIU | uploaded, 4:56 |
+| 5 | Slide deck / documentation link | deck kept outside the repo | **upload to Drive, "Anyone with the link → Viewer"** |
+| 6 | Submit the form | https://forms.gle/nnam5eXrf5cjXdf3 | **not submitted** |
 
-## Should do if time allows
+## Must fix before submitting
 
-- [ ] Create a throwaway Gmail with an App Password for the live "Connect mailbox" moment; send it the two sample attachments beforehand
-- [ ] Run the LLM path on the ~30 emails rules are least confident about and report the delta on a slide (Gemini key is configured locally)
-- [ ] Restrict API CORS to the Amplify origin (currently `*`)
-- [ ] Clear the ~104 leftover `upload_*` rows from DynamoDB so the Impact page counts 520, not 624
-- [ ] Rotate the Gemini and 21st.dev keys after the event (both passed through chat)
-- [ ] Clear the leftover `upload_*` rows from DynamoDB so Impact counts 520, not 624
-- [ ] Ask the organisers for the scoring-server URL
+| | Task | Owner | Notes |
+|---|---|---|---|
+| A | Submit the **locally generated** `output/submission.json` (scores 1.000), not `cloud.json` (0.9869) | anyone | `sdoc run` writes it |
+| B | Redeploy the Lambda image so the pinned PDF libraries take effect, then regenerate `cloud.json` | backend | Pins are in `pyproject.toml`; on the old image `email_499_BL.pdf` raised `PdfminerException` and was wrongly escalated |
+| C | Reset the live data: `POST /process`, then delete the leftover `upload_*` rows and the two test overrides (`email_517`, `email_519`) from DynamoDB | backend | Impact currently shows 624 emails and 45 mismatches; should be 520 and 46 |
+| D | Deck fixes: check the demo link, "WHATSDOCDOES" heading, the run-together words on the validation slide, 58 → **59 tests**, names matching the last slide | pitch | |
+| E | `docs/demo_to_final.md`: what we plan to build for the final round, linked from the README | Rahul | Planned |
 
-## Finals (after 24 Sep, if shortlisted)
+## Nice to have if time allows
 
-- [ ] Gmail add-on / Outlook add-in so staff trigger a check from inside the mail client
-- [ ] SQS + worker Lambda for `POST /process`; move region to ap-southeast-1 (PDPA)
-- [ ] OCR reader for image-only PDFs (Textract or Tesseract) as a `DocumentReader`
-- [ ] Learn label synonyms from reviewer corrections
-- [ ] Screen-reader pass with a real user; Play-store Data Safety form if publishing
-- [ ] Implement multi user support  
+- [ ] Restrict API CORS to the shipdoc.org / Amplify origin (currently `*`)
+- [ ] Throwaway Gmail with an App Password for a live "Connect mailbox" moment
+- [ ] Run the LLM path on the emails the rules are least sure about and report the difference
+- [ ] Rotate the Gemini and 21st.dev keys after the event (both were pasted into chat)
 
-## Open questions for Workshop 2 (Averis, 21 Sep 7 PM)
+## Already done
 
-1. Catching every defect vs never raising a false alarm: which matters more to them?
-2. Do they want the tool to draft the amendment email, or only flag?
+- [x] Pipeline: classify, read txt/pdf/docx/xlsx, extract 7 fields, compare, escalate. **1.000** on the 520-email set, 59 tests
+- [x] AI layer: Gemini / Claude API / Bedrock for classification fallback, extraction and translation, disk-cached
+- [x] Real mail in: IMAP (Gmail, Outlook, any host), single or bulk `.eml` upload, 3 one-click samples, 13 verified test emails
+- [x] Web dashboard: Inbox, Compare, **Why?** audit trail, Invoices, Impact, Help, plus Privacy / Terms / Cookies / Accessibility
+- [x] UI in English, Bahasa Melayu and Chinese; light and dark themes; keyboard and screen-reader support
+- [x] Android app via Capacitor, prebuilt APK pointing at the live API, `scripts/demo-android.ps1`
+- [x] Deployed on AWS: Lambda + Function URL, DynamoDB, Amplify Hosting, custom domain shipdoc.org
+- [x] Docker: `docker compose up --build` runs API + dashboard
+- [x] Docs: README, PLAN, ARCHITECTURE, HANDOFF, USER-GUIDE, DEMO-ANDROID, COMPLIANCE, AWS-DEPLOYMENT
+- [x] Team details in the app footer and legal pages
+
+## Final round (after 24 Sep, if shortlisted)
+
+- [ ] Gmail add-on / Outlook add-in so staff run a check inside their mail client
+- [ ] SQS + worker Lambda for `POST /process`
+- [ ] OCR for scanned PDFs instead of escalating them
+- [ ] Learn new label synonyms from reviewer corrections
+- [ ] Multi-user support with sign-in
+- [ ] Screen-reader pass with a real user
+
+## Open questions for the organisers
+
+1. Catching every defect vs never raising a false alarm: which matters more to Averis?
+2. Should the tool draft the amendment email, or only flag the mismatch?
 3. Will the organisers' scoring server be available, and at what URL?
-4. Which mail client do their documentation staff use (Outlook desktop? Gmail?) so the add-in roadmap targets the right one.

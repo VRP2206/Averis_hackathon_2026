@@ -6,7 +6,11 @@ requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.6",
     "pydantic-settings>=2.2",
-    "pdfplumber>=0.11",
+    # Pinned: a different pdfminer build on AWS Lambda raised PdfminerException on a PDF
+    # that reads fine locally (email_499), so the email was wrongly escalated as unreadable.
+    "pdfplumber==0.11.10",
+    "pdfminer.six==20260107",
+    "cryptography>=43",
     "python-docx>=1.1",
     "openpyxl>=3.1",
     "fastapi>=0.110",

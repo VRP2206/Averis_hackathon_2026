@@ -8,8 +8,12 @@ shipdoc reads a shipping-documentation inbox, sorts every email, checks each dra
 
 ## Try it out
 
-**Live dashboard:** https://shipdoc.org (while DNS propagates: https://main.d3pt38qur6i911.amplifyapp.com/)
-**API:** https://j2mwf375qvy2xpf3xdqs4wai6y0rvrqd.lambda-url.ap-southeast-1.on.aws/docs
+| | |
+|---|---|
+| **Live dashboard** | https://shipdoc.org · https://www.shipdoc.org |
+| **Demo video (5 min)** | https://youtu.be/6k3d8YqbmIU |
+| **API** | https://j2mwf375qvy2xpf3xdqs4wai6y0rvrqd.lambda-url.ap-southeast-1.on.aws/docs |
+| **Android app** | [apk/sdoc-debug.apk](apk/sdoc-debug.apk) · [how to run it](docs/DEMO-ANDROID.md) |
 
 Deployed on AWS in ap-southeast-1: Lambda + Function URL, DynamoDB, Amplify Hosting.
 
