@@ -43,6 +43,7 @@ Deadline: **Tue 22 Sep, 12:00 PM**. Aim to submit the form by 11:00. Team: **Cla
 - [ ] OCR reader for image-only PDFs (Textract or Tesseract) as a `DocumentReader`
 - [ ] Learn label synonyms from reviewer corrections
 - [ ] Screen-reader pass with a real user; Play-store Data Safety form if publishing
+- [ ] Implement multi user support  
 
 ## Open questions for Workshop 2 (Averis, 21 Sep 7 PM)
 
