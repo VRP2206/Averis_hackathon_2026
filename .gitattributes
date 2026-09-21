@@ -1,0 +1,9 @@
+# Binary files git must never rewrite: line-ending conversion corrupts PDFs
+# (it shifts byte offsets and breaks the cross-reference table).
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.apk binary
+*.png binary
+*.svg text eol=lf
+*.eml -text
