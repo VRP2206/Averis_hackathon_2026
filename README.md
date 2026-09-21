@@ -16,6 +16,7 @@ Documentation at:  https://docs.shipdoc.org
 | **Demo video (5 min)** | https://youtu.be/6k3d8YqbmIU |
 | **Backend API** | https://j2mwf375qvy2xpf3xdqs4wai6y0rvrqd.lambda-url.ap-southeast-1.on.aws/docs |
 | **Android app** | [apk/sdoc-debug.apk](apk/sdoc-debug.apk) · [how to run it](docs/DEMO-ANDROID.md) |
+| **Slides** | https://canva.link/gv1ugztqn5bd2fc |
 
 
 Deployed on AWS in ap-southeast-1: Lambda + Function URL, DynamoDB, Amplify Hosting.
