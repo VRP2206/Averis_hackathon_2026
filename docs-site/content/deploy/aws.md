@@ -163,6 +163,6 @@ Use a new tag each time so you always know which version is live. Environment va
 
 ## Limits of the current deployment
 
-- The public deployment has **one shared workspace**. An uploaded email or an imported mailbox is held by a single Lambda instance and shown to every visitor, and can disappear when that instance is replaced. Treat it as a demo and use test data.
+- The public deployment has **one shared workspace**. An uploaded email or an imported mailbox is held by a single Lambda instance and shown to every visitor, and can disappear when that instance is replaced. Treat it as a demo and use test data. Private per-visitor workspaces are on the [roadmap](/roadmap).
 - The API has no authentication and open CORS. Restrict `allow_origins` in `sdoc/api.py` and add authentication before any real use.
 - Image-only PDFs are escalated, not read with OCR.

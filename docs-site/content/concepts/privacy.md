@@ -22,7 +22,7 @@ shipdoc is a student prototype built for the Averis × Monash Hackathon 2026. It
 ## Using real email
 
 ::: warning The public demo is shared
-On the public deployment every visitor sees the same inbox, including anything uploaded or imported. Use a throwaway mailbox with an App Password, and do not upload real customer emails. For real mail, run your own copy ([locally](/deploy/run-locally) or [on AWS](/deploy/aws)).
+On the public deployment every visitor sees the same inbox, including anything uploaded or imported, and a connected mailbox stays connected (its credentials held in the server's memory) until someone disconnects it. Use a throwaway mailbox with an App Password, and do not upload real customer emails. Private per-visitor workspaces are on the [roadmap](/roadmap). For real mail, run your own copy ([locally](/deploy/run-locally) or [on AWS](/deploy/aws)).
 :::
 
 Pointing shipdoc at a real inbox means processing names, phone numbers and business addresses of shipping staff and customers. Before doing that for an organisation you would need a processing agreement, a notice to the affected people, and a review of where the data is stored. Malaysia's Personal Data Protection Act 2010 (as amended) applies first, and the GDPR too when counterparties are in the EU. Nobody has reviewed shipdoc as legal advice: have counsel check it for anything beyond the hackathon.

@@ -20,7 +20,7 @@ shipdoc checks the paperwork that arrives in a shipping-documentation inbox. For
 | Use it on a phone | Install the [Android app](/guide/android) |
 
 ::: warning Use test data on the public demo
-The live demo is a shared prototype. Use a throwaway mailbox and do not upload real customer emails to it. See [Privacy and data handling](/concepts/privacy).
+The live demo has one shared workspace: an email you upload or a mailbox you connect can be seen by other visitors. Use a throwaway mailbox and do not upload real customer emails to it. Private workspaces are on the [roadmap](/roadmap). See [Privacy and data handling](/concepts/privacy).
 :::
 
 ## What you see

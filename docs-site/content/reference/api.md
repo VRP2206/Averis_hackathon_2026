@@ -200,5 +200,5 @@ curl -X POST "https://<base-url>/mailbox/connect" -H "Content-Type: application/
 Access is read-only. Use an App Password on a test mailbox (see the [user guide](/guide/user-guide)). A failed connection answers `400` with `could not connect: ...`.
 
 ::: warning The public demo shares one workspace
-On the public deployment every visitor sees the same inbox, including anything uploaded or imported. Do not send real customer data there. Run your own copy ([locally](/deploy/run-locally) or [on AWS](/deploy/aws)) for real mail.
+On the public deployment every visitor sees the same inbox, including anything uploaded or imported. Do not send real customer data there. Private per-visitor workspaces are on the [roadmap](/roadmap). Run your own copy ([locally](/deploy/run-locally) or [on AWS](/deploy/aws)) for real mail.
 :::

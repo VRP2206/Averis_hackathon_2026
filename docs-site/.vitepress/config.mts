@@ -10,7 +10,7 @@ export default withMermaid(
     description: "Documentation for shipdoc: check every draft Bill of Lading against its Shipping Instruction, and hand what it cannot decide to a person.",
     lang: "en",
     srcDir: "content",
-    lastUpdated: true,
+    lastUpdated: false, // the hosted build has no full git history, so the label would be empty
     cleanUrls: false, // plain .html files work on any static host, no rewrite rules needed
     head: [
       ["link", { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
@@ -26,6 +26,7 @@ export default withMermaid(
         { text: "Concepts", link: "/concepts/how-it-works", activeMatch: "/concepts/" },
         { text: "Reference", link: "/reference/api", activeMatch: "/reference/" },
         { text: "Deploy", link: "/deploy/run-locally", activeMatch: "/deploy/" },
+        { text: "Roadmap", link: "/roadmap" },
         { text: "Open the app", link: APP_URL },
       ],
       sidebar: [
@@ -61,6 +62,10 @@ export default withMermaid(
             { text: "Run it locally", link: "/deploy/run-locally" },
             { text: "Deploy on AWS", link: "/deploy/aws" },
           ],
+        },
+        {
+          text: "Project",
+          items: [{ text: "Roadmap", link: "/roadmap" }],
         },
       ],
       socialLinks: [{ icon: "github", link: REPO_URL }],

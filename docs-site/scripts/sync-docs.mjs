@@ -36,8 +36,10 @@ for (const [src, dest] of Object.entries(PAGES)) {
   }
   let text = readFileSync(from, "utf8");
   if (src.endsWith("test-emails/README.md")) {
-    // make each file name in the table a download link
-    text = text.replace(/^\| (\d\d-[a-z0-9-]+) \|/gm, (_m, name) => `| [${name}](/test-emails/${name}.eml) |`);
+    // make each file name in the table a download link. Plain HTML on purpose: VitePress rewrites Markdown
+    // links to internal paths and would turn "x.eml" into "x.eml.html", which does not exist.
+    text = text.replace(/^\| (\d\d-[a-z0-9-]+) \|/gm,
+      (_m, name) => `| <a href="/test-emails/${name}.eml" download="${name}.eml">${name}</a> |`);
   }
   if (src.endsWith("ARCHITECTURE.md")) {
     // a wide left-to-right diagram shrinks to unreadable on the page: draw it top-down
