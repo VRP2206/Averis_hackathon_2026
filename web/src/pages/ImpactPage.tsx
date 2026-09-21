@@ -3,6 +3,7 @@ import { api, type EmailResult, type Metrics } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Stats } from "@/components/Stats";
 import { useT } from "@/lib/i18n";
+import { measured } from "@/content/results";
 
 const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
 
@@ -52,7 +53,25 @@ export function ImpactPage() {
 
       <section aria-labelledby="acc">
         <h2 id="acc" className="mb-2 text-sm font-medium text-muted-foreground">Accuracy vs answer key</h2>
-        {noTruth && <p className="text-sm text-muted-foreground">Ground truth is not available on this server, so accuracy is not shown.</p>}
+        {noTruth && (
+          <>
+            <p className="mb-3 text-muted-foreground">
+              The organisers' answer key is deliberately not deployed to this server, so these figures were measured
+              on {measured.dataset} by running the same pipeline against that key on {measured.asOf}.
+              Reproduce them with <code>{measured.command}</code>.
+            </p>
+            <Stats items={[
+              { label: "Final score", value: measured.finalScore, hint: "organisers' formula", tone: "blue" },
+              { label: "Classification accuracy", value: measured.classificationAccuracy, hint: "5 categories", tone: "red" },
+              { label: "Defects fully caught", value: measured.defectsCaught, hint: "exact fields, end-to-end", tone: "yellow" },
+              { label: "False alarms", value: measured.falseAlarms, hint: "clean pairs flagged", tone: "green" },
+            ]} />
+            <p className="mt-2 text-sm text-muted-foreground">
+              Escalations caught with the right reason: {measured.escalations}. {measured.tests} automated tests pass.
+              Measured offline, not a claim about production mail.
+            </p>
+          </>
+        )}
         {m && (
           <>
             <Stats items={[

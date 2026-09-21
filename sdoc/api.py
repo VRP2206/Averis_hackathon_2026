@@ -27,7 +27,8 @@ from .pipeline import Pipeline, build_pipeline
 from .store import ResultStore, make_store
 
 app = FastAPI(title="SDOC", version="0.1.0")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+ORIGINS = [o.strip() for o in settings.allowed_origins.split(",") if o.strip()]
+app.add_middleware(CORSMiddleware, allow_origins=ORIGINS, allow_methods=["*"], allow_headers=["*"])
 
 _pipeline: Optional[Pipeline] = None
 _store: ResultStore = make_store(settings.dynamodb_table, settings.output_dir / "results.json")

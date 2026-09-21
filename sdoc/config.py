@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     output_dir: Path = REPO_ROOT / "output"
     # AWS: set SDOC_DYNAMODB_TABLE to keep results in DynamoDB instead of output/results.json.
     dynamodb_table: str = ""
+    # Browsers allowed to call the API. "*" suits a public demo; in production set
+    # SDOC_ALLOWED_ORIGINS to a comma-separated list, e.g. "https://shipdoc.org,https://www.shipdoc.org".
+    allowed_origins: str = "*"
 
     # LLM. "none" = rules + heuristics only (free, offline).
     llm_provider: Literal["none", "anthropic", "bedrock", "gemini"] = "none"

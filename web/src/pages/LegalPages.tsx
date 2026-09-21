@@ -26,7 +26,7 @@ export function PrivacyPage() {
       </ul>
       <p>We do not use analytics, advertising, tracking pixels or third-party embeds. We do not sell or share personal data.</p>
       <h2>AI processing</h2>
-      <p>When an AI model is enabled, the text of emails and attachments may be sent to Anthropic (Claude API) or Amazon Web Services (Amazon Bedrock) to classify emails and read document fields. These providers process the data to return a result and, under their business terms, do not use it to train models. The comparison decision itself is made by our own code.</p>
+      <p>When an AI model is enabled, the text of emails and attachments may be sent to an AI provider to classify emails, read document fields and translate messages. This deployment uses <strong>Google Gemini</strong> (Google AI for Developers); the same code can be configured to use Anthropic (Claude API) or Amazon Web Services (Amazon Bedrock) instead. Under those providers' business terms the text is processed to return a result and is not used to train their models. The comparison decision itself is made by our own code, never by an AI model.</p>
       <h2>Where data is stored</h2>
       <p>Results and reviewer decisions are stored on the server that hosts the API (during the hackathon, an AWS account operated by the team). If this is outside {b.country}, that is a cross-border transfer under the Personal Data Protection Act 2010; we only do this for the synthetic demo data and reviewer names of team members.</p>
       <h2>Retention</h2>
