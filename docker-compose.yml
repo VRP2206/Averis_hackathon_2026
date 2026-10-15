@@ -4,6 +4,7 @@
 services:
   api:
     build: .
+    restart: unless-stopped
     ports:
       - "8000:8000"
     env_file:
@@ -16,10 +17,11 @@ services:
       - ./output:/app/output
 
   web:
+    restart: unless-stopped
     build:
       context: ./web
       args:
-        VITE_API_URL: http://localhost:8000
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}   # public API URL when self-hosting
     ports:
       - "5173:80"
     depends_on:

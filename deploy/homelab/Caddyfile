@@ -1,0 +1,10 @@
+# One block per deployment. Cloudflare Tunnel sends every hostname here (plain HTTP on :80).
+{
+	auto_https off
+}
+http://lab.shipdoc.org {
+	reverse_proxy localhost:5173
+}
+http://lab-api.shipdoc.org {
+	reverse_proxy localhost:8000
+}
