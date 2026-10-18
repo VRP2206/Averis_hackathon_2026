@@ -8,3 +8,7 @@ http://lab.shipdoc.org {
 http://lab-api.shipdoc.org {
 	reverse_proxy localhost:8000
 }
+http://shipdoc.org, http://www.shipdoc.org {
+	root * /srv/notice
+	file_server
+}

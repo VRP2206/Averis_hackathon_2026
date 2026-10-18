@@ -5,6 +5,7 @@ services:
     network_mode: host
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./notice:/srv/notice:ro
   cloudflared:
     image: cloudflare/cloudflared:latest
     restart: unless-stopped

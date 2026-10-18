@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>shipdoc has moved</title>
+<style>
+  :root { --bg:#fafafa; --fg:#18181b; --muted:#52525b; --card:#fff; --line:#e4e4e7; --accent:#2563eb; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0e0e11; --fg:#f4f4f5; --muted:#a1a1aa; --card:#18181b; --line:#2e2e35; --accent:#60a5fa; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:grid; place-items:center; padding:16px; background:var(--bg); color:var(--fg);
+         font:16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width:560px; width:100%; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:28px; }
+  h1 { margin:0 0 8px; font-size:1.5rem; }
+  p { margin:0 0 14px; color:var(--muted); }
+  ul { margin:0 0 14px; padding-left:20px; }
+  li { margin-bottom:6px; }
+  a { color:var(--accent); }
+  small { color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>shipdoc has moved</h1>
+  <p>The AWS deployment of shipdoc (Shipping Document Check) has been taken down because the AWS account has expired.
+     The project now runs on a self-hosted server.</p>
+  <ul>
+    <li>Website: <a href="https://lab.shipdoc.org">lab.shipdoc.org</a></li>
+    <li>API: <a href="https://lab-api.shipdoc.org/health">lab-api.shipdoc.org</a></li>
+  </ul>
+  <p>Documentation is still at <a href="https://docs.shipdoc.org">docs.shipdoc.org</a>.</p>
+  <small>shipdoc is a student prototype built for the Averis &times; Monash Hackathon 2026.</small>
+</main>
+</body>
+</html>
