@@ -16,7 +16,7 @@ npm run dev            # http://localhost:5173  (API at http://127.0.0.1:8000 by
 
 Set the API base URL with `VITE_API_URL` (see `.env.example`). Click **Process inbox** once to populate results.
 
-## Build the website
+## Build the website    
 
 ```bash
 VITE_API_URL=https://<your-api> npm run build     # -> dist/
